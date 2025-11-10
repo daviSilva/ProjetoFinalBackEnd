@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 const clienteModel = {
 
-    criarCliente: async () => {
+    criarCliente: async ({ nomeCliente, cpfCliente, Telefone, endereco, email_cliente }) => {
         const sql = "INSERT INTO clientes (nomeCliente, cpfCliente, Telefone, endereco, email_cliente) VALUES (?, ?, ?, ?, ?)"
         const values = [nomeCliente, cpfCliente, Telefone, endereco, email_cliente]
         const rows = await pool.query(sql, values);
@@ -33,6 +33,13 @@ const clienteModel = {
      SelectionaClientePorId: async (id) => {
         const sql = 'SELECT * FROM clientes WHERE id_cliente = ?';
         const values = [id];
+        const [rows] = await pool.query(sql, values);
+        return rows[0];
+    },
+
+     selecionarClientePorCPF: async (cpfCliente) => {
+        const sql = 'SELECT * FROM clientes WHERE cpfCliente = ?';
+        const values = [cpfCliente];
         const [rows] = await pool.query(sql, values);
         return rows[0];
     },
