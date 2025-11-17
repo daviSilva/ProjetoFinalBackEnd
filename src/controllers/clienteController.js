@@ -29,6 +29,14 @@ const clienteController = {
         return res.status(500).json({ message: 'Erro no servidor', messageError: error });
     }
 },
+    criaNovoCliente: async(req, res) =>{
+        try {
+            
+            
+        } catch (error) {
+            
+        }
+    }
 }
 
 module.exports = {clienteController}
