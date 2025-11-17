@@ -1,98 +1,116 @@
-const {query} =  require('../config/db');
-const {clienteModel} = require('../models/clienteModel');
-const clienteController = {
+const { query } = require('../config/db');
+const {ClienteModel} = require('../models/clienteModel');
 
-    /**
-     * 
-     * @param {req} req 
-     * @param {res} res 
-     * @returns 
-     */
-    selecionaTodosClientesEID: async (req, res) => {
-    try {
-        const id_cliente = req.query.id_cliente; // vem da query string
-        // Se não tiver ID → busca todos os clientes
-        if (!id_cliente) {
-            const resultado = await clienteModel.selecionaTodosClientes();
+const ClienteController = {
 
-            if (!resultado || resultado.length === 0) {
-                return res.status(200).json({ message: 'A lista de clientes está vazia' });
+    // Criar cliente
+    criarCliente: async (req, res) => {
+        try {
+            const {
+                nome_completo,
+                cpf,
+                email,
+                logradouro,
+                numero,
+                bairro,
+                cidade,
+                estado,
+                cep,
+                telefones
+            } = req.body;
+
+            if (!nome_completo || !cpf || !email || !logradouro || !numero || !bairro || !cidade || !estado || !cep ||! telefones) {
+                return res.status(400).json({ erro: "Todos os campos principais devem ser preenchidos." });};
+ 
+            
+            const cpfExistente = await ClienteModel.selecionarClientePorCpf(cpf);
+
+            if (cpf == cpfExistente) {
+                return res.status(409).json({ erro: "CPF já cadastrado no sistema." });}
+
+            const resultado = await ClienteModel.criarCliente(
+                nome_completo,
+                cpf,
+                email,
+                logradouro,
+                numero,
+                bairro,
+                cidade,
+                estado,
+                cep,
+                telefones
+            );
+
+            return res.status(201).json({
+                mensagem: "Cliente cadastrado com sucesso!",
+                resultado
+            });
+
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
+        }
+    },
+
+
+    // Selecionar todos os clientes
+    selecionaTodosClientes: async (req, res) => {
+        try {
+            const clientes = await ClienteModel.selecionaTodosClientes();
+            if (clientes.length === 0) {
+                return res.status(200).json({ mensagem: "lista de clientes vazia" });
+            }
+            return res.status(200).json(clientes);
+
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
+        }
+    },
+
+
+    // Atualizar cliente
+    atualizaCliente: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const {
+                nome_completo,
+                cpf,
+                email,
+                logradouro,
+                numero,
+                bairro,
+                cidade,
+                estado,
+                cep
+            } = req.body;
+
+            if (!id) {
+                return res.status(400).json({ erro: "ID do cliente é obrigatório." });
             }
 
-            return res.status(200).json({ message: 'Resultado dos dados listados', resultado });
-        }
-        // Se tiver ID → valida e busca cliente específico
-        const id = Number(id_cliente);
-        if (isNaN(id) || id <= 0) {
-            return res.status(400).json({ message: 'Parâmetro id_cliente inválido' });
-        }
-        const resultado = await clienteModel.SelectionaClientePorId(id);
-        if (!resultado) {
-            return res.status(404).json({ message: 'Cliente não encontrado' });
-        }
-        return res.status(200).json({ message: 'Cliente encontrado', resultado });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Erro no servidor', messageError: error });
-    }
+            const resultado = await ClienteModel.atualizaCliente(
+                id,
+                nome_completo,
+                cpf,
+                email,
+                logradouro,
+                numero,
+                bairro,
+                cidade,
+                estado,
+                cep
+            );
 
-},
-<<<<<<< HEAD
-    criaNovoCliente: async(req, res) =>{
-        try {
-            
-            
-        } catch (error) {
-            
-        }
-    }
-=======
-/**
- * 
- * @param {*} req 
- * @param {*} res 
- * @returns 
- */
-    inserirNovoCliente: async (req, res) => {
-    try {
-        const { nomeCliente, cpfCliente, Telefone, endereco, email_cliente } = req.body;
-
-        // Validação dos campos obrigatórios
-        if (!nomeCliente || !cpfCliente || !Telefone || !endereco || !email_cliente) {
-            return res.status(400).json({
-                message: "DADOS INVÁLIDOS. POR FAVOR FORNEÇA DADOS CORRETOS PARA CRIAÇÃO DO NOVO CLIENTE"
+            return res.status(200).json({
+                mensagem: "Cliente atualizado com sucesso!",
+                resultado
             });
+
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
         }
+    },
 
-        // Verifica se CPF já está cadastrado
-        const clienteExistente = await clienteModel.selecionarClientePorCPF(cpfCliente);
-        if (clienteExistente) {
-            return res.status(409).json({ message: "CPF JÁ CADASTRADO NO SISTEMA" });
-        }
+};
 
-        // Insere novo cliente
-        const novoCliente = await clienteModel.criarCliente({
-            nomeCliente,
-            cpfCliente,
-            Telefone,
-            endereco,
-            email_cliente
-        });
-
-        // Retorna sucesso
-        res.status(201).json({
-            message: "Cliente cadastrado com sucesso!",
-            cliente: novoCliente
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Erro interno ao cadastrar cliente", error: error.message });
-    }
-},
-
-
->>>>>>> 67dd0a68f390a6fcd47da768a411aa7552e4c06e
-}
-
-module.exports = {clienteController}
+module.exports = ClienteController;
