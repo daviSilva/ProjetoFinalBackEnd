@@ -9,5 +9,5 @@ pedidoRoutes.get('/pedidos', pedidoController.selecionaTodosPedidos);
 pedidoRoutes.post('/pedidos', pedidoController.criaPedido);
 
 //rota para atualizar pedido 
-pedidoRoutes.put('/pedidos/:IDpedido', pedidoController.atualizaPedido);
+pedidoRoutes.put('/pedidos/', pedidoController.atualizaPedido);
 module.exports = { pedidoRoutes };

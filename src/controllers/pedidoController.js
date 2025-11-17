@@ -64,57 +64,76 @@ const pedidoController = {
         }
     },
 
+    //atualizar pedido
+    /**
+     * função para atualizar um pedido existente
+     * @param {*} req 
+     * @param {*} res 
+     * @returns <promise<object>} objeto com os dados atualizados do pedido
+     * @example
+     * entrada de dados via json
+     * {
+     *   "id_cliente": 1,
+     *  "data_pedido": "2024-06-15",
+     *  "tipo_entrega": "urgente",
+     *  "distancia_km": 50,
+     *  "peso_kg": 10
+     * }
+     * chamada da função para o pedido de id 1
+     * PUT /pedidos/1
+     * // Output:
+     * {
+     *   "mensagem": "Pedido atualizado com sucesso!",
+     *  "resultado": {
+     *    "id_pedido": 1,
+     *   "id_cliente": 1,
+     *   "data_pedido": "2024-06-15",
+     *   "tipo_entrega": "urgente",
+     *  "distancia_km": 50,
+     *  "peso_kg": 10,
+     *   "valor_km": 100,
+     *  "valor_kg": 50,
+     *  "valor_total": 195
+     * }
+     */
     atualizaPedido: async (req, res) => {
         try {
-            // Pega o ID do pedido na rota
-            const { id_pedido } = req.params;
-    
-            // Dados enviados no corpo
+            const { id } = req.query.id_pedido;
             const {
+                id_cliente,
                 data_pedido,
                 tipo_entrega,
                 distancia_km,
                 peso_kg
             } = req.body;
-    
-            // Validações básicas
-            if (!data_pedido || !tipo_entrega || !distancia_km || !peso_kg) {
+
+            if (!id) {
+                return res.status(400).json({ erro: "ID do pedido é obrigatório." });
+            }
+            if (!id_cliente || !data_pedido || !tipo_entrega || !distancia_km || !peso_kg) {
                 return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
             }
-    
-            if (!id_pedido || !Number.isInteger(Number(id_pedido))) {
-                return res.status(400).json({ erro: "ID do pedido inválido." });
-            }
-    
-            // Recalcular valores
-            const valor_km = distancia_km * 10; // base 10
-            const valor_kg = peso_kg * 20;      // base 20
-            const valor_total = valor_km + valor_kg;
-    
-            // Atualizar no banco
             const resultado = await pedidoModel.atualizaPedido(
-                id_pedido,
+                id,
+                id_cliente,
                 data_pedido,
                 tipo_entrega,
                 distancia_km,
-                peso_kg,
-                valor_km,
-                valor_kg,
-                valor_total
+                peso_kg
             );
-    
             return res.status(200).json({
                 mensagem: "Pedido atualizado com sucesso!",
                 resultado
             });
-    
         } catch (error) {
+            console.error(error);
             return res.status(500).json({
-                erro: error.message || "Erro ao atualizar pedido."
+                message: "Erro no servidor.",
+                erro: error.message
             });
         }
     }
-    
+
 };
 
 module.exports = pedidoController;
