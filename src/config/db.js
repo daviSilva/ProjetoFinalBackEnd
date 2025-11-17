@@ -1,16 +1,17 @@
-const mysql = require('mysql2/promise')
-//Limitar as conexoes e quando estão cheias ele vai aguardar uma conexão ficar livre para colocar outra.
+const mysql = require('mysql2/promise');
+
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '1234',
-    database: 'sistema_entregas',
-    port: 3308,
-    waitForConnections: true, //Aguarda conexoes livres
-    connectionLimit: 10, //Limita o numero de conexoes
-    queueLimit: 0 //Sem limite para a fila de espera
+  host: 'localhost',
+  user: 'root',
+  password: 'dcs@241008',
+  database: 'sistema_entregas',
+   port: 3308,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
+module.exports = pool;
 (async () => {
     try {
         const connection = await pool.getConnection();
