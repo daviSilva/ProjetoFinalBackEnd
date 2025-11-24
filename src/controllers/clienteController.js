@@ -1,5 +1,6 @@
 const { query } = require('../config/db');
 const {ClienteModel} = require('../models/clienteModel');
+const { telefoneModel } = require('../models/telefoneModel');
 
 const ClienteController = {
 
@@ -110,6 +111,28 @@ const ClienteController = {
             return res.status(500).json({ erro: error.message });
         }
     },
+
+    //ATUALIZAR TELEFONE
+    atualizaTelefone: async (req, res) => {
+        try {
+            const {id_telefone} = req.query.id_telefone;
+            const {novo_numero} = req.body;
+
+            if (!id_telefone || !novo_numero || novo_numero.trim() === '' || novo_numero.length < 8 || novo_numero.length > 15) {
+                return res.status(400).json({ erro: "ID do telefone e novo número são obrigatórios. O número deve ter entre 8 e 15 caracteres." });
+            }
+            const resultado = await telefoneModel.atualizaTelefone(id_telefone, novo_numero);
+            
+            return res.status(200).json({
+                message : "Telefone atualizado com sucesso!",
+                data : resultado
+            })
+            
+        } catch (error) {
+            console.error ("Erro ao atualizar telefone:", error)
+            return res.status(500).json({ erro: error.message });
+        }
+    }
 
 };
 

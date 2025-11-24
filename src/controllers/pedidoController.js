@@ -1,3 +1,4 @@
+const { ClienteModel } = require('../models/clienteModel');
 const pedidoModel = require('../models/pedidoModel');
 
 const pedidoController = {
@@ -52,9 +53,47 @@ const pedidoController = {
     },
 
     // Selecionar todos
+    /**
+     * 
+     * @param {*} req 
+     * @param {*} res 
+     * @returns <promise<object>> lista de todos os pedidos cadastrados no sistema
+     * @example
+     * chamada da função
+     * GET /pedidos
+     * // Output:
+     * [
+     *   {
+     *    "id_pedido": 1,
+     *   "id_cliente_fk": 1,
+     *   "data_pedido": "2024-06-15",
+     *   "tipo_entrega": "urgente",
+     *   "distancia_km": 50,
+     *   "peso_kg": 10,
+     *   "valor_km": 100,
+     *  "valor_kg": 50,
+     *  "valor_total": 195
+     *  },
+     *  {
+     *   "id_pedido": 2,
+     *  "id_cliente_fk": 2,
+     *  "data_pedido": "2024-06-16",
+     *  "tipo_entrega": "normal",
+     *  "distancia_km": 30,
+     *  "peso_kg": 5,
+     *  "valor_km": 60,
+     *  "valor_kg": 25,
+     *  "valor_total": 85
+     * }
+     * ]
+     */
     selecionaTodosPedidos: async (req, res) => {
         try {
             const pedidos = await pedidoModel.selecionaTodosPedidos();
+            //puxar o nome do cliente junto
+            const nomeDoClientePorPedido = await Promise.all(pedidos.map(async (pedido))) => { {
+                const cliente = await ClienteModel.selecionaClientePorId(pedido.id_cliente_fk);
+                return {}
             return res.status(200).json(pedidos);
 
         } catch (erro) {
@@ -67,8 +106,8 @@ const pedidoController = {
     //atualizar pedido
     /**
      * função para atualizar um pedido existente
-     * @param {*} req 
-     * @param {*} res 
+     * @param {Request} req Parametro de requisição com os dados do pedido a ser atualizado
+     * @param {Response} res Paramerto de resposta da requisição 
      * @returns <promise<object>} objeto com os dados atualizados do pedido
      * @example
      * entrada de dados via json
@@ -132,7 +171,8 @@ const pedidoController = {
                 erro: error.message
             });
         }
-    }
+    },
+
 
 };
 

@@ -1,10 +1,15 @@
-const pool = require('../config/db'); // ajuste o caminho conforme seu projeto
-const { atualizaCliente } = require('../controllers/clienteController');
-const { atualizaPedido } = require('../controllers/pedidoController');
+const pool = require('../config/db');
 
-// Valores base fixos
+
+
+/*Caso o tipo de entrega seja "urgente", aplica-se um acréscimo de 20% sobre o valor base. Se o tipo de entrega for "normal", nenhum acréscimo é aplicado.
+• O valor final da entrega é o resultado da soma entre o valor base e o acréscimo (caso aplicável).
+• Caso o valor final seja superior a R$ 500,00, aplicar um desconto de 10% sobre o valor final.
+• Caso o peso da carga ultrapasse 50 kg, adicionar uma taxa fixa adicional de R$ 15,00 ao valor final.*/
+// Valores base fixos para calculos
 const VALOR_BASE_KM = 10;
 const VALOR_BASE_KG = 20;
+const VALOR_PESO_TAXA = 15; // taxa fixa adicional para peso acima de 50kg
 
 const PedidoModel = {
 
@@ -33,12 +38,21 @@ const PedidoModel = {
             // -- CÁLCULOS DO PEDIDO 
             const valor_km = distancia_km * VALOR_BASE_KM;
             const valor_kg = peso_kg * VALOR_BASE_KG;
+            
 
             let valor_total = valor_km + valor_kg;
+            
 
             // Entrega urgente aumenta 30%
             if (tipo_entrega === "urgente") {
                 valor_total *= 1.3;
+            }
+            // Taxa adicional para peso acima de 50kg
+            if (peso_kg > 50) {
+                valor_kg += VALOR_PESO_TAXA;
+            }
+            if (valor_total > 500) {
+                valor_total *= 0.9; // Aplica desconto de 10%
             }
             // Inserir pedido
             const sql = `

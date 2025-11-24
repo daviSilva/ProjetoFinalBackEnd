@@ -173,6 +173,18 @@ const ClienteModel = {
         } catch (error) {
             throw error;
         }
+    },
+    selecionerClientePorId: async (id) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'SELECT * FROM clientes WHERE id_cliente = ?';
+            const [rows] = await connection.query(sql, [id]);
+            connection.commit();
+            return rows[0];
+        } catch (error) {
+            connection.rollback();
+            throw error;
+        }
     }
 };
 
