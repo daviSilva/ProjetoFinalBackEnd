@@ -92,7 +92,29 @@ const telefoneController = {
             });
         }
     },
-
+    /**
+     * função para selecionar todos os telefones
+     * @param {Parameters} req parametro de requisição 
+     * @param {Parameters} res parametro de resposta da requisição
+     * @returns /<promise<object[]>} array de objetos com os dados dos telefones
+     * @example
+     * chamada da função:
+     * GET /telefones
+     * // Output esperado:
+     * [
+     * {
+     * "IDTelefone": 1,
+     * "id_cliente_fk": 2,
+     * "telefone": "11999999999"
+     * },
+     * {
+     * "IDTelefone": 2,
+     * "id_cliente_fk": 3,
+     * "telefone": "11888888888"
+     * }
+     * ]
+     * 
+     */
     selecionaTodosTelefones: async (req, res) => {
         try {
             const telefones = await telefoneModel.selecionaTodosTelefones();
