@@ -113,6 +113,52 @@ const ClienteModel = {
 
 
     // Selecionar todos os clientes
+    /**
+     * 
+     * @returns {Promise<Array>} retorna uma lista com todos os clientes encontrados
+     * @example
+     * chamada da função
+     * const clientes = await clienteModel.selecionaTodosClientes();
+ * 
+ * // Output esperado:
+ * [
+ *   {
+ *     "id": 1,
+ *     "nome_completo": "João Silva",
+ *     "cpf": "123.456.789-00",
+ *     "email": "joao@email.com",
+ *     "logradouro": "Rua Exemplo",
+ *     "numero": "100",
+ *     "bairro": "Centro",
+ *     "cidade": "Cidade Exemplo",
+ *     "estado": "SP",
+ *     "cep": "12345-678"
+ *   },
+ *   {
+ *     "id": 2,
+ *     "nome_completo": "Maria Souza",
+ *     "cpf": "987.654.321-00",
+ *     ...
+ *   }
+ * ]
+ * 
+ * Exemplo de saída no Insomnia:
+ * [
+ *   {
+ *     "id": 1,
+ *     "nome_completo": "João Silva",
+ *     "cpf": "123.456.789-00",
+ *     "email": "joao@email.com",
+ *     "logradouro": "Rua Exemplo",
+ *     "numero": "100",
+ *     "bairro": "Centro",
+ *     "cidade": "Cidade Exemplo",
+ *     "estado": "SP",
+ *     "cep": "12345-678"
+ *   }
+ * ]
+ */
+     
     selecionaTodosClientes: async () => {
         const connection = await pool.getConnection();
 
@@ -128,6 +174,44 @@ const ClienteModel = {
     },
 
     //Atualizar cliente 
+    /**
+     * @param {number} id_cliente ID do cliente que será atualizado
+     * @param {object} dadosAtualizados objeto contendo apenas os campos que devem ser modificados
+     * @returns {Promise<object>} retorna o resultado da operação de atualização
+     * @example
+     * * entrada de dados via JSON:
+ * {
+ *   "nome_completo": "João Silva Atualizado",
+ *   "email": "joao.atualizado@email.com",
+ *   "cidade": "Nova Cidade",
+ *   "estado": "RJ"
+ * }
+ * 
+ * chamada da função:
+ * const resultado = await clienteModel.atualizarCliente(1, {
+ *   nome_completo: "João Silva Atualizado",
+ *   email: "joao.atualizado@email.com",
+ *   cidade: "Nova Cidade",
+ *   estado: "RJ"
+ * });
+ * 
+ * // Output:
+ * {
+ *   "affectedRows": 1,
+ *   "changedRows": 1,
+ *   "message": "Cliente atualizado com sucesso!"
+ * }
+ * 
+ * Exemplo de saída no Insomnia:
+ * {
+ *   "message": "Cliente atualizado com sucesso!",
+ *   "resultado": {
+ *     "affectedRows": 1,
+ *     "changedRows": 1
+ *   }
+ * }
+ */
+
     atualizaCliente: async (id_cliente, nome_completo, cpf, email, logradouro, numero, bairro, cidade, estado, cep) => {
         const connection = await pool.getConnection();
 

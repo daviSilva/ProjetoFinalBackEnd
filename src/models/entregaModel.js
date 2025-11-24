@@ -3,6 +3,51 @@ const pool = require('../config/db');
 const entregaModel = {
 
     //mostrar todas as entregas
+    /**
+     * 
+     * @returns {Promise<Array>} uma lista contendo todas as entregas registradas
+     * * @example
+ * chamada da função:
+ * const entregas = await entregaModel.mostraTodasEntregas();
+ * 
+ * // Output esperado:
+ * [
+ *   {
+ *     "id_entrega": 1,
+ *     "id_pedido_fk": 10,
+ *     "valor_distancia": 20.50,
+ *     "valor_peso": 12.30,
+ *     "acrescimo": 10.15,
+ *     "taxa_extra": 15.00,
+ *     "valor_final": 57.95,
+ *     "status_entrega": "pendente"
+ *   },
+ *   {
+ *     "id_entrega": 2,
+ *     "id_pedido_fk": 11,
+ *     "valor_distancia": 35.00,
+ *     "valor_peso": 20.00,
+ *     "acrescimo": 0,
+ *     "taxa_extra": 15.00,
+ *     "valor_final": 70.00,
+ *     "status_entrega": "entregue"
+ *   }
+ * ]
+ * 
+ * Exemplo de saída no Insomnia:
+ * [
+ *   {
+ *     "id_entrega": 1,
+ *     "id_pedido_fk": 10,
+ *     "valor_distancia": 20.50,
+ *     "valor_peso": 12.30,
+ *     "acrescimo": 10.15,
+ *     "taxa_extra": 15,
+ *     "valor_final": 57.95,
+ *     "status_entrega": "pendente"
+ *   }
+ * ]
+     */
     mostraTodasEntregas: async () => {
         const connection = await pool.getConnection();
         try {

@@ -14,6 +14,42 @@ const VALOR_PESO_TAXA = 15; // taxa fixa adicional para peso acima de 50kg
 const PedidoModel = {
 
     // Criar novo pedido
+    /*** @param {number} id_cliente - ID do cliente relacionado ao pedido.
+     * @param {string} data_pedido - Data em que o pedido foi realizado.
+     * @param {string} tipo_entrega - "normal" ou "urgente".
+     * @param {number} distancia_km - Distância percorrida em quilômetros.
+     * @param {number} peso_kg - Peso da carga em quilos.
+     * @returns {Promise<object>} retorna o ID do pedido e os valores calculados.
+     * @example
+     * entrada via JSON:
+     * {
+     *   "id_cliente": 1,
+     *   "data_pedido": "2025-01-20",
+     *   "tipo_entrega": "urgente",
+     *   "distancia_km": 12,
+     *   "peso_kg": 30
+     * }
+     *
+     * chamada:
+     * const novo = await PedidoModel.criarPedido(1, "2025-01-20", "urgente", 12, 30);
+     * 
+     * // Output esperado:
+     * {
+     *   "id_pedido": 15,
+     *   "valor_total": 468,
+     *   "valor_km": 120,
+     *   "valor_kg": 600
+     * }
+     * 
+     * Exemplo saída Insomnia:
+     * {
+     *   "id_pedido": 15,
+     *   "valor_total": 468,
+     *   "valor_km": 120,
+     *   "valor_kg": 600
+     * }
+     */
+     
     criarPedido: async (
         id_cliente,
         data_pedido,
@@ -95,6 +131,37 @@ const PedidoModel = {
 
 
     // Selecionar todos os pedidos
+    /**
+     * 
+     * @returns  {Promise<Array>} lista contendo todos os pedidos.
+     * 
+     * @example
+     * chamada:
+     * const pedidos = await PedidoModel.selecionaTodosPedidos();
+     * 
+     * // Saída esperada:
+     * [
+     *   {
+     *     "IDPedido": 1,
+     *     "id_cliente_fk": 3,
+     *     "data_pedido": "2025-01-20",
+     *     "tipo_entrega": "normal",
+     *     "distancia_km": 15,
+     *     "peso_kg": 40,
+     *     "valor_total": 350
+     *   }
+     * ]
+     * 
+     * Exemplo saída Insomnia:
+     * [
+     *   {
+     *     "IDPedido": 1,
+     *     "id_cliente_fk": 3,
+     *     "data_pedido": "2025-01-20"
+     *   }
+     * ]
+     */
+     
     selecionaTodosPedidos: async () => {
         const connection = await pool.getConnection();
 
@@ -113,6 +180,31 @@ const PedidoModel = {
 
 
     // Selecionar pedido por ID
+    /**
+     * 
+     * @param {*} id - ID do pedido
+     * {Promise<object|null>} retorna o pedido encontrado ou null.
+     * 
+     * @returns {Promise<object|null>} retorna o pedido encontrado ou null.
+     * 
+     * @example
+     * chamada:
+     * const pedido = await PedidoModel.selecionaPedidoPorId(5);
+     * 
+     * // Output esperado:
+     * {
+     *   "IDPedido": 5,
+     *   "tipo_entrega": "urgente",
+     *   "valor_total": 780
+     * }
+     * 
+     * Saída Insomnia:
+     * {
+     *   "IDPedido": 5,
+     *   "valor_total": 780
+     * }
+     */
+   
     selecionaPedidoPorId: async (id) => {
         const connection = await pool.getConnection();
 
@@ -128,7 +220,31 @@ const PedidoModel = {
             connection.release();
         }
     },
-
+    /**
+     * @param {number} id_pedido - ID do pedido a ser atualizado.
+     * @param {string} tipo_entrega - Tipo de entrega ("normal" ou "urgente").
+     * @param {number} distancia_km - Nova distância percorrida.
+     * @param {number} peso_kg - Novo peso da carga.
+     * 
+     * @returns {Promise<object>} resultado da atualização.
+     * 
+     * @example
+     * chamada:
+     * const atualizado = await PedidoModel.atualizaPedido(3, "urgente", 40, 70);
+     *
+     * // Output esperado:
+     * {
+     *   "affectedRows": 1,
+     *   "changedRows": 1
+     * }
+     *
+     * Exemplo saída Insomnia:
+     * {
+     *   "message": "Pedido atualizado com sucesso!",
+     *   "resultado": { "affectedRows": 1 }
+     * }
+     */
+    
     atualizaPedido : async (id_pedido, tipo_entrega, distancia_km, peso_kg) => {
         const connection = await pool.getConnection();
 
