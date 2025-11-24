@@ -17,14 +17,46 @@ const entregaModel = {
     },
 
     //criar uma nova entrega, pegando informações como valores do pedido
-    criarNovaEntrega : async (id_pedido_fk, valor_distancia, valor_peso, acrescimo, dnsPrefetchControl, taxa_extra, valor_final, status_entrega) => {
+    /**
+     * Cria uma nova entrada na tabela 'entregas' com base nos valores calculados do pedido.
+     * @param {number} id_pedido_fk - ID do pedido.
+     * @param {number} valor_distancia - Valor calculado baseado na distância (valor_km do pedido).
+     * @param {number} valor_peso - Valor calculado baseado no peso (valor_kg do pedido).
+     * @param {number} acrescimo - O acréscimo de 30% se a entrega for "urgente" (ou 0 se for "normal").
+     * @param {number} taxa_extra - Taxa adicional fixa por peso excedente (R$ 15,00).
+     * @param {number} valor_final - O valor final total da entrega (valor_total do pedido).
+     * @param {string} status_entrega - Status inicial da entrega (e.g., "pendente").
+     */
+    criarNovaEntrega : async (id_pedido_fk, valor_distancia, valor_peso, acrescimo, taxa_extra, valor_final, status_entrega) => {
         const connection = await pool.getConnection();
         try {
-        const sql = "INSERT INTO entregas (id_pedido_fk, valor_distancia, valor_peso, acrescimo, dnsPrefetchControl, taxa_extra, valor_final, status_entrega) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        const values = [id_pedido_fk, ]        
-        } catch (error) {
+            await connection.beginTransaction(); // Inicia a transação
             
-        }
+            // Note: Ajustei o SQL para remover 'dnsPrefetchControl' e incluí o 'acrescimo' e 'taxa_extra' na ordem correta.
+            const sql = `
+                INSERT INTO entregas 
+                (id_pedido_fk, valor_distancia, valor_peso, acrescimo, taxa_extra, valor_final, status_entrega) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const values = [
+                id_pedido_fk, 
+                valor_distancia, 
+                valor_peso, 
+                acrescimo, 
+                taxa_extra, 
+                valor_final, 
+                status_entrega || 'pendente' // Define 'pendente' como status padrão se não for fornecido
+            ];
+            
+            const [rows] = await connection.query(sql, values);
+            
+            await connection.commit();
+            return rows;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } 
     },
 
     atualizaEntrega: async (IDEntrega, status_entrega) => {
@@ -41,3 +73,5 @@ const entregaModel = {
         }
     },
 }
+
+module.exports = {entregaModel}; // Adicionei a exportação para o modelo ser utilizável

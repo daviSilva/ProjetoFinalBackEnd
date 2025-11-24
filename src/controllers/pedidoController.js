@@ -90,12 +90,15 @@ const pedidoController = {
     selecionaTodosPedidos: async (req, res) => {
         try {
             const pedidos = await pedidoModel.selecionaTodosPedidos();
-            //puxar o nome do cliente junto
-            const nomeDoClientePorPedido = await Promise.all(pedidos.map(async (pedido))) => { {
+            // puxar o nome do cliente junto
+            const pedidosComCliente = await Promise.all(pedidos.map(async (pedido) => {
                 const cliente = await ClienteModel.selecionaClientePorId(pedido.id_cliente_fk);
-                return {}
-            return res.status(200).json(pedidos);
-
+                return {
+                    ...pedido,
+                    cliente_nome: cliente ? cliente.nome : null
+                };
+            }));
+            return res.status(200).json(pedidosComCliente);
         } catch (erro) {
             return res.status(500).json({
                 erro: erro.message || "Erro ao buscar pedidos."
@@ -137,7 +140,7 @@ const pedidoController = {
      */
     atualizaPedido: async (req, res) => {
         try {
-            const { id } = req.query.id_pedido;
+            const { id } = req.params;
             const {
                 id_cliente,
                 data_pedido,
@@ -172,7 +175,6 @@ const pedidoController = {
             });
         }
     },
-
 
 };
 
