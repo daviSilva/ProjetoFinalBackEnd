@@ -3,7 +3,14 @@ const pedidoModel = require('../models/pedidoModel');
 
 const pedidoController = {
 
+   /**
+    * 
+    * Criar um novo pedido no sistema.
+     * Valida os dados enviados, verifica duplicidade e salva no banco
+    */
     // Criar pedido
+    
+
     criaPedido: async (req, res) => {
         try {
             const {

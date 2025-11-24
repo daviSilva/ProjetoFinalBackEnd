@@ -5,6 +5,18 @@ const { telefoneModel } = require('../models/telefoneModel');
 const ClienteController = {
 
     // Criar cliente
+    /**
+     * 
+     *   * Controller responsável por criar um novo cliente no sistema.
+     * 
+     * - Valida se todos os campos obrigatórios foram enviados.
+     * - Verifica se o CPF já está cadastrado.
+     * - Chama o Model para inserir o cliente e seus telefones.
+     *
+     * @param {Object} req - Objeto da requisição HTTP contendo os dados do cliente.
+     * @param {Object} res - Objeto de resposta para retornar o status e mensagens.
+     */
+
     criarCliente: async (req, res) => {
         try {
             const {
@@ -54,6 +66,16 @@ const ClienteController = {
 
 
     // Selecionar todos os clientes
+    /**
+     * Controller responsável por buscar todos os clientes cadastrados no sistema.
+     *
+     * - Caso não haja clientes, retorna mensagem informativa.
+     * - Caso existam, retorna a lista completa.
+     * 
+     * @param {Object} req - Requisição enviada pelo cliente.
+     * @param {Object} res - Resposta enviada pelo servidor.
+     */
+     
     selecionaTodosClientes: async (req, res) => {
         try {
             const clientes = await ClienteModel.selecionaTodosClientes();
@@ -69,6 +91,16 @@ const ClienteController = {
 
 
     // Atualizar cliente
+    /**
+     * Controller responsável por atualizar os dados de um cliente existente.
+     *
+     * - Valida se o ID foi enviado.
+     * - Atualiza todos os dados recebidos.
+     *
+     * @param {Object} req - Requisição contendo os dados e o ID do cliente.
+     * @param {Object} res - Resposta com o status da operação.
+     */
+    
     atualizaCliente: async (req, res) => {
         try {
             const { id } = req.params;
@@ -113,6 +145,17 @@ const ClienteController = {
     },
 
     //ATUALIZAR TELEFONE
+    /**
+     *  Controller responsável por atualizar o número de telefone de um cliente.
+     *
+     * - Valida se o ID do telefone foi enviado.
+     * - Verifica formato do número.
+     * - Chama o Model para realizar atualização.
+     *
+     * @param {Object} req - Requisição contendo id do telefone e novo número.
+     * @param {Object} res - Resposta com o status e dados atualizados.
+     */
+    
     atualizaTelefone: async (req, res) => {
         try {
             const {id_telefone} = req.query.id_telefone;
