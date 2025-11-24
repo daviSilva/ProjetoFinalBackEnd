@@ -55,24 +55,23 @@ const entregaModel = {
 
             const { distancia_km, peso_kg, tipo_entrega } = pedido[0];
 
-            // ---- CÁLCULOS ----
+            // contas
             const valor_distancia = distancia_km * VALOR_KM;
             const valor_peso = peso_kg * VALOR_KG;
             const valor_base = valor_distancia + valor_peso;
 
-            // acréscimo
             const acrescimo = tipo_entrega === "urgente" ? valor_base * 0.20 : 0;
 
             let valor_final = valor_base + acrescimo;
 
             // desconto
-            const desconto = valor_final > 500 ? (valor_final * 0.10) : 0;
+            const desconto = valor_final > 500 ? valor_final * 0.10 : 0;
 
             valor_final -= desconto;
 
-            // taxa extra para peso alto
+            // taxa extra
             const taxa_extra = peso_kg > 50 ? TAXA_PESO_EXTRA : 0;
-
+            
             valor_final += taxa_extra;
 
             // INSERT
@@ -93,13 +92,12 @@ const entregaModel = {
                 status_entrega
             ];
 
-            const [rows] = await connection.query(sqlInsert, values);
+            const [result] = await connection.query(sqlInsert, values);
 
             await connection.commit();
 
-            // Retorna também os valores calculados
             return {
-                id_entrega: rows.insertId,
+                id_entrega: result.insertId,
                 id_pedido_fk,
                 valor_distancia,
                 valor_peso,
@@ -113,43 +111,49 @@ const entregaModel = {
         } catch (error) {
             await connection.rollback();
             throw error;
+        } finally {
+            connection.release();
         }
     },
 
 
 
-
-    atualizaEntrega: async (IDEntrega, status_entrega) => {
+    atualizaEntrega: async (idEntrega, status_entrega) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'UPDATE entregas SET status_entrega = ? WHERE IDEntrega = ?';
-            const values = [status_entrega, IDEntrega];
+            const sql = 'UPDATE entregas SET status_entrega = ? WHERE id_entrega = ?';
+            const values = [status_entrega, idEntrega];
 
-            const [rows] = await connection.query(sql, values);
+            const [result] = await connection.query(sql, values);
 
-            await connection.commit(); // <-- CORRIGIDO
-
-            return rows; // <-- CORRIGIDO
+            return {
+                affectedRows: result.affectedRows,
+                changedRows: result.changedRows
+            };
         } catch (error) {
-            await connection.rollback();
             throw error;
+        } finally {
+            connection.release();
         }
     },
 
 
-    deletaEntrega: async (IDEntrega) => {
+    deletaEntrega: async (idEntrega) => {
         const connection = await pool.getConnection();
         try {
             const sql = 'DELETE FROM entregas WHERE id_entrega = ?';
-            const values = [IDEntrega];
-            const [rows] = await connection.query(sql, values);
-            connection.commit();
-            return [rows];
+            const values = [idEntrega];
+            const [result] = await connection.query(sql, values);
+
+            return {
+                affectedRows: result.affectedRows
+            };
         } catch (error) {
-            connection.rollback();
             throw error;
+        } finally {
+            connection.release();
         }
     },
 }
 
-module.exports = { entregaModel }; 
+module.exports = { entregaModel };

@@ -73,9 +73,8 @@ const PedidoModel = {
 
             // -- CÁLCULOS DO PEDIDO 
             const valor_km = distancia_km * VALOR_BASE_KM;
-            const valor_kg = peso_kg * VALOR_BASE_KG;
+            let valor_kg = peso_kg * VALOR_BASE_KG;
             
-
             let valor_total = valor_km + valor_kg;
             
 
@@ -248,69 +247,73 @@ const PedidoModel = {
     atualizaPedido : async (id_pedido, tipo_entrega, distancia_km, peso_kg) => {
     const connection = await pool.getConnection();
 
-    // valores fixos
+    // Constantes fixas
     const VALOR_BASE_KM = 10;
     const VALOR_BASE_KG = 20;
-    const VALOR_PESO_TAXA = 15;
+    const TAXA_PESO_EXTRA = 15;
 
     try {
         await connection.beginTransaction();
 
-        // cálculos
-        let valor_km = distancia_km * VALOR_BASE_KM;
+        // ---- CÁLCULOS ----
+        const valor_km = distancia_km * VALOR_BASE_KM;
         let valor_kg = peso_kg * VALOR_BASE_KG;
-
         let valor_total = valor_km + valor_kg;
-        let taxa_extra = 0;
 
-        // urgente → +20%
+        // acréscimo para urgente
         if (tipo_entrega === "urgente") {
-            valor_total *= 1.20;
+            valor_total *= 1.30;
         }
 
-        // peso > 50kg → taxa extra
+        // taxa extra se peso > 50 (aplica ao valor_kg e ao total)
+        let taxa_extra = 0;
         if (peso_kg > 50) {
-            taxa_extra = VALOR_PESO_TAXA;
+            taxa_extra = TAXA_PESO_EXTRA;
+            valor_kg += taxa_extra;
             valor_total += taxa_extra;
         }
 
-        // se valor_total > 500 → desconto
+        // desconto se > 500 (10%)
         let desconto = 0;
         if (valor_total > 500) {
             desconto = valor_total * 0.10;
             valor_total -= desconto;
         }
-
+ 
         const sql = `
             UPDATE pedidos
-            SET tipo_entrega = ?, distancia_km = ?, peso_kg = ?, valor_km = ?, valor_kg = ?  , valor_total = ?
+            SET tipo_entrega = ?, 
+                distancia_km = ?, 
+                peso_kg = ?, 
+                valor_km = ?, 
+                valor_kg = ?,  
+                valor_total = ?
             WHERE IDPedido = ?
         `;
-
+ 
         const values = [
             tipo_entrega,
             distancia_km,
             peso_kg,
             valor_km,
             valor_kg,
-
-           
             valor_total,
             id_pedido
         ];
-
+ 
         const [rows] = await connection.query(sql, values);
+ 
         await connection.commit();
-
         return rows;
-
+ 
     } catch (error) {
         await connection.rollback();
         throw error;
+    } finally {
+        connection.release();
     }
-},
-
-
+}
+ 
 };
 
 module.exports = PedidoModel;

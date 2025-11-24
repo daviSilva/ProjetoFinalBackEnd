@@ -148,7 +148,12 @@ const pedidoController = {
     atualizaPedido: async (req, res) => {
     try {
         const { id_pedido } = req.query;
-        const { tipo_entrega, distancia_km, peso_kg } = req.body;
+
+        const {
+            tipo_entrega,
+            distancia_km,
+            peso_kg
+        } = req.body;
 
         if (!id_pedido) {
             return res.status(400).json({ erro: "ID do pedido é obrigatório." });
@@ -171,13 +176,13 @@ const pedidoController = {
         });
 
     } catch (error) {
-        console.error(error);
         return res.status(500).json({
             message: "Erro no servidor.",
             erro: error.message
         });
     }
 },
+
 
 
 };

@@ -97,7 +97,8 @@ criaNovaEntrega: async (req, res) => {
  
     atualizaEntrega: async (req, res) => {
     try {
-        const { id } = req.query;  // <-- CORRIGIDO
+        const { id } = req.query;
+
         const { status_entrega } = req.body;
 
         if (!id || !status_entrega) {
