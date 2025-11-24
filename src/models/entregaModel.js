@@ -1,20 +1,23 @@
 const pool = require('../config/db');
 
 const entregaModel = {
+    // Valores base fixos para calculos
 
-    //mostrar todas as entregas
+
+    // Mostrar todas as entregas
     mostraTodasEntregas: async () => {
         const connection = await pool.getConnection();
         try {
             const sql = 'SELECT * FROM entregas';
             const [rows] = await connection.query(sql);
-            connection.commit();
             return rows;
         } catch (error) {
-            connection.rollback();
             throw error;
+        } finally {
+            connection.release();
         }
     },
+
 
     //criar uma nova entrega, pegando informações como valores do pedido
     /**
@@ -27,43 +30,118 @@ const entregaModel = {
      * @param {number} valor_final - O valor final total da entrega (valor_total do pedido).
      * @param {string} status_entrega - Status inicial da entrega (e.g., "pendente").
      */
-    criarNovaEntrega : async (id_pedido_fk, valor_distancia, valor_peso, acrescimo, taxa_extra, valor_final, status_entrega) => {
+    criarNovaEntrega: async (id_pedido_fk, status_entrega = 'pendente') => {
         const connection = await pool.getConnection();
+
+        const VALOR_KM = 10;
+        const VALOR_KG = 20;
+        const TAXA_PESO_EXTRA = 15;
+
         try {
-            await connection.beginTransaction(); // Inicia a transação
-            
-            // Note: Ajustei o SQL para remover 'dnsPrefetchControl' e incluí o 'acrescimo' e 'taxa_extra' na ordem correta.
-            const sql = `
-                INSERT INTO entregas 
-                (id_pedido_fk, valor_distancia, valor_peso, acrescimo, taxa_extra, valor_final, status_entrega) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `;
+            await connection.beginTransaction();
+
+            // BUSCA OS DADOS DO PEDIDO
+            const sqlBuscaPedido = `
+            SELECT distancia_km, peso_kg, tipo_entrega 
+            FROM pedidos 
+            WHERE IdPedido = ?
+        `;
+
+            const [pedido] = await connection.query(sqlBuscaPedido, [id_pedido_fk]);
+
+            if (pedido.length === 0) {
+                throw new Error("Pedido informado não existe.");
+            }
+
+            const { distancia_km, peso_kg, tipo_entrega } = pedido[0];
+
+            // ---- CÁLCULOS ----
+            const valor_distancia = distancia_km * VALOR_KM;
+            const valor_peso = peso_kg * VALOR_KG;
+            const valor_base = valor_distancia + valor_peso;
+
+            // acréscimo
+            const acrescimo = tipo_entrega === "urgente" ? valor_base * 0.20 : 0;
+
+            let valor_final = valor_base + acrescimo;
+
+            // desconto
+            const desconto = valor_final > 500 ? (valor_final * 0.10) : 0;
+
+            valor_final -= desconto;
+
+            // taxa extra para peso alto
+            const taxa_extra = peso_kg > 50 ? TAXA_PESO_EXTRA : 0;
+
+            valor_final += taxa_extra;
+
+            // INSERT
+            const sqlInsert = `
+            INSERT INTO entregas 
+            (id_pedido_fk, valor_distancia, valor_peso, acrescimo, desconto, taxa_extra, valor_final, status_entrega)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
             const values = [
-                id_pedido_fk, 
-                valor_distancia, 
-                valor_peso, 
-                acrescimo, 
-                taxa_extra, 
-                valor_final, 
-                status_entrega || 'pendente' // Define 'pendente' como status padrão se não for fornecido
+                id_pedido_fk,
+                valor_distancia,
+                valor_peso,
+                acrescimo,
+                desconto,
+                taxa_extra,
+                valor_final,
+                status_entrega
             ];
-            
-            const [rows] = await connection.query(sql, values);
-            
+
+            const [rows] = await connection.query(sqlInsert, values);
+
             await connection.commit();
-            return rows;
+
+            // Retorna também os valores calculados
+            return {
+                id_entrega: rows.insertId,
+                id_pedido_fk,
+                valor_distancia,
+                valor_peso,
+                acrescimo,
+                desconto,
+                taxa_extra,
+                valor_final,
+                status_entrega
+            };
+
         } catch (error) {
             await connection.rollback();
             throw error;
-        } 
+        }
     },
+
+
+
 
     atualizaEntrega: async (IDEntrega, status_entrega) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'UPDATE entregas SET status_entrega = ? WHERE id_entrega = ?';
+            const sql = 'UPDATE entregas SET status_entrega = ? WHERE IDEntrega = ?';
             const values = [status_entrega, IDEntrega];
+
+            const [rows] = await connection.query(sql, values);
+
+            await connection.commit(); // <-- CORRIGIDO
+
+            return rows; // <-- CORRIGIDO
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        }
+    },
+
+
+    deletaEntrega: async (IDEntrega) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'DELETE FROM entregas WHERE id_entrega = ?';
+            const values = [IDEntrega];
             const [rows] = await connection.query(sql, values);
             connection.commit();
             return [rows];
@@ -74,4 +152,4 @@ const entregaModel = {
     },
 }
 
-module.exports = {entregaModel}; // Adicionei a exportação para o modelo ser utilizável
+module.exports = { entregaModel }; 

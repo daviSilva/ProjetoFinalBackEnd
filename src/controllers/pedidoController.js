@@ -92,7 +92,7 @@ const pedidoController = {
             const pedidos = await pedidoModel.selecionaTodosPedidos();
             // puxar o nome do cliente junto
             const pedidosComCliente = await Promise.all(pedidos.map(async (pedido) => {
-                const cliente = await ClienteModel.selecionaClientePorId(pedido.id_cliente_fk);
+                const cliente = await ClienteModel.selecionerClientePorId(pedido.id_cliente_fk);
                 return {
                     ...pedido,
                     cliente_nome: cliente ? cliente.nome : null
@@ -139,42 +139,39 @@ const pedidoController = {
      * }
      */
     atualizaPedido: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const {
-                id_cliente,
-                data_pedido,
-                tipo_entrega,
-                distancia_km,
-                peso_kg
-            } = req.body;
+    try {
+        const { id_pedido } = req.query;
+        const { tipo_entrega, distancia_km, peso_kg } = req.body;
 
-            if (!id) {
-                return res.status(400).json({ erro: "ID do pedido é obrigatório." });
-            }
-            if (!id_cliente || !data_pedido || !tipo_entrega || !distancia_km || !peso_kg) {
-                return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
-            }
-            const resultado = await pedidoModel.atualizaPedido(
-                id,
-                id_cliente,
-                data_pedido,
-                tipo_entrega,
-                distancia_km,
-                peso_kg
-            );
-            return res.status(200).json({
-                mensagem: "Pedido atualizado com sucesso!",
-                resultado
-            });
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({
-                message: "Erro no servidor.",
-                erro: error.message
-            });
+        if (!id_pedido) {
+            return res.status(400).json({ erro: "ID do pedido é obrigatório." });
         }
-    },
+
+        if (!tipo_entrega || distancia_km == null || peso_kg == null) {
+            return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
+        }
+
+        const resultado = await pedidoModel.atualizaPedido(
+            id_pedido,
+            tipo_entrega,
+            distancia_km,
+            peso_kg
+        );
+
+        return res.status(200).json({
+            mensagem: "Pedido atualizado com sucesso!",
+            resultado
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Erro no servidor.",
+            erro: error.message
+        });
+    }
+},
+
 
 };
 
