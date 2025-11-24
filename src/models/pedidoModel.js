@@ -246,47 +246,70 @@ const PedidoModel = {
      */
     
     atualizaPedido : async (id_pedido, tipo_entrega, distancia_km, peso_kg) => {
-        const connection = await pool.getConnection();
+    const connection = await pool.getConnection();
 
-        try {
-            await connection.beginTransaction();
+    // valores fixos
+    const VALOR_BASE_KM = 10;
+    const VALOR_BASE_KG = 20;
+    const VALOR_PESO_TAXA = 15;
 
-            // -- CÁLCULOS DO PEDIDO 
-            const valor_km = distancia_km * VALOR_BASE_KM;
-            const valor_kg = peso_kg * VALOR_BASE_KG;
+    try {
+        await connection.beginTransaction();
 
-            let valor_total = valor_km + valor_kg;
+        // cálculos
+        let valor_km = distancia_km * VALOR_BASE_KM;
+        let valor_kg = peso_kg * VALOR_BASE_KG;
 
-            // Entrega urgente aumenta 30%
-            if (tipo_entrega === "urgente") {
-                valor_total *= 1.3;
-            }
+        let valor_total = valor_km + valor_kg;
+        let taxa_extra = 0;
 
-            const sql = `
-                UPDATE pedidos
-                SET tipo_entrega = ?, distancia_km = ?, peso_kg = ?, valor_km = ?, valor_kg = ?,  valor_total = ?
-                WHERE IDpedido = ?
-            `;
-
-            const values = [
-                tipo_entrega,
-                distancia_km,
-                peso_kg,
-                valor_km,
-                valor_kg,
-                valor_total,
-                id_pedido
-            ];
-
-            const [rows] = await connection.query(sql, values);
-            await connection.commit();
-            return rows;
-
-        } catch (error) {
-            await connection.rollback();
-            throw error;
+        // urgente → +20%
+        if (tipo_entrega === "urgente") {
+            valor_total *= 1.20;
         }
-    },
+
+        // peso > 50kg → taxa extra
+        if (peso_kg > 50) {
+            taxa_extra = VALOR_PESO_TAXA;
+            valor_total += taxa_extra;
+        }
+
+        // se valor_total > 500 → desconto
+        let desconto = 0;
+        if (valor_total > 500) {
+            desconto = valor_total * 0.10;
+            valor_total -= desconto;
+        }
+
+        const sql = `
+            UPDATE pedidos
+            SET tipo_entrega = ?, distancia_km = ?, peso_kg = ?, valor_km = ?, valor_kg = ?  , valor_total = ?
+            WHERE IDPedido = ?
+        `;
+
+        const values = [
+            tipo_entrega,
+            distancia_km,
+            peso_kg,
+            valor_km,
+            valor_kg,
+
+           
+            valor_total,
+            id_pedido
+        ];
+
+        const [rows] = await connection.query(sql, values);
+        await connection.commit();
+
+        return rows;
+
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    }
+},
+
 
 };
 
