@@ -12,6 +12,6 @@ clienteRoutes.post('/clientes', clienteController.criarCliente);
 //rota para atualizar telefone
 clienteRoutes.put('/clientes/atualizatelefone', clienteController.atualizaTelefone)
 //rota para atualizar cliente
-clienteRoutes.put('/clientes/atualizacliente', clienteController.atualizaCliente)
+clienteRoutes.put('/clientes/atualizacliente/:id', clienteController.atualizaCliente)
 
 module.exports = { clienteRoutes };

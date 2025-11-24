@@ -74,6 +74,48 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: http://localhost:8081/clientes/atualizacliente/:id
+        name: atualiza clientes
+        meta:
+          id: req_bd64c6a6e7d04022b91dc1be9bb8e88a
+          created: 1764002235034
+          modified: 1764003365437
+          isPrivate: false
+          description: ""
+          sortKey: -1764002235034
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+                "nome_completo": "Maria Silva",
+                "cpf": "12345678900",
+                "email": "maria@gmail.com",
+                "logradouro": "Rua das Flores",
+                "numero": "150",
+                "bairro": "Centro",
+                "cidade": "São Paulo",
+                "estado": "SP",
+                "cep": "01001000"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "3"
   - name: pedido
     meta:
       id: fld_8f14f6ec79094c79a88f2035fe3d1ff8
@@ -252,6 +294,105 @@ collection:
           text: |-
             {
             	"status_entrega" : "finalizado"
+            }
+        parameters:
+          - name: id
+            value: "1"
+            description: ""
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: telefone
+    meta:
+      id: fld_28ffc11b6ce34fc49f94b00e21d9e5dc
+      created: 1764001860798
+      modified: 1764001860798
+      sortKey: -1764001860798
+      description: ""
+    children:
+      - url: http://localhost:8081/telefones
+        name: selecionar todos telefones
+        meta:
+          id: req_216ef9b239f84ebabd130174a5c614d2
+          created: 1764001863212
+          modified: 1764002188741
+          isPrivate: false
+          description: ""
+          sortKey: -1764001863212
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8081/telefones
+        name: CRIAR NOVO TELEFONE
+        meta:
+          id: req_a6d4aed2b667488083cd040afa9e614b
+          created: 1764002171831
+          modified: 1764003526139
+          isPrivate: false
+          description: ""
+          sortKey: -1764002171831
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"id_cliente_fk" : 1,
+            	"numero_telefone" : 19982684044
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8081/telefones
+        name: New Request
+        meta:
+          id: req_6493d3f34da44621bec58b17a4397ba5
+          created: 1764003540783
+          modified: 1764003607033
+          isPrivate: false
+          description: ""
+          sortKey: -1764003540783
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"numero_telefone": "11988888888"
             }
         parameters:
           - name: id

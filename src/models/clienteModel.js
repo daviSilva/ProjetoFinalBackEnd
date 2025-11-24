@@ -219,7 +219,7 @@ const ClienteModel = {
             const sql = `
                 UPDATE clientes
                 SET nome_completo = ?, cpf = ?, email = ?, logradouro = ?, numero = ?, bairro = ?, cidade = ?, estado = ?, cep = ?
-                WHERE id_cliente = ?
+                WHERE IDCliente = ?
             `;
 
             const values = [

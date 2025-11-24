@@ -18,11 +18,11 @@ const telefoneModel = {
      * 
      * @throws {Error} Caso ocorra algum erro durante a inserção no banco de dados.
      */
-    
+
     adicionarTelefone: async (id_cliente, numero_telefone) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'INSERT INTO telefones (id_cliente_fk, numero_telefone) VALUES (?, ?)';
+            const sql = 'INSERT INTO telefones (id_cliente_fk, telefone) VALUES (?, ?)';
             const values = [id_cliente, numero_telefone];
             const [result] = await connection.query(sql, values);
             connection.commit();
@@ -49,15 +49,29 @@ const telefoneModel = {
      * 
      * @throws {Error} Caso ocorra algum problema durante a atualização no banco de dados.
      */
-    
+
     atualizaTelefone: async (id_telefone, novo_numero) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'UPDATE telefones SET numero_telefone = ? WHERE id_telefone = ?';
+            const sql = 'UPDATE telefones SET telefone = ? WHERE IDTelefone = ?';
             const values = [novo_numero, id_telefone];
             const [rows] = await connection.query(sql, values);
             connection.commit();
             return [rows];
+        } catch (error) {
+            connection.rollback();
+            throw error;
+
+        }
+    },
+
+    selecionaTodosTelefones: async () => {
+        try {
+            const connection = await pool.getConnection();
+            const sql = 'SELECT * FROM telefones';
+            const [rows] = await connection.query(sql);
+            return rows;
+
         } catch (error) {
             connection.rollback();
             throw error;

@@ -102,47 +102,48 @@ const ClienteController = {
      */
     
     atualizaCliente: async (req, res) => {
-        try {
-            const { id } = req.params;
+    try {
+        const id = req.params.id; // ← CORRETO
 
-            const {
-                nome_completo,
-                cpf,
-                email,
-                logradouro,
-                numero,
-                bairro,
-                cidade,
-                estado,
-                cep
-            } = req.body;
+        const {
+            nome_completo,
+            cpf,
+            email,
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            estado,
+            cep
+        } = req.body;
 
-            if (!id) {
-                return res.status(400).json({ erro: "ID do cliente é obrigatório." });
-            }
-
-            const resultado = await ClienteModel.atualizaCliente(
-                id,
-                nome_completo,
-                cpf,
-                email,
-                logradouro,
-                numero,
-                bairro,
-                cidade,
-                estado,
-                cep
-            );
-
-            return res.status(200).json({
-                mensagem: "Cliente atualizado com sucesso!",
-                resultado
-            });
-
-        } catch (error) {
-            return res.status(500).json({ erro: error.message });
+        if (!id) {
+            return res.status(400).json({ erro: "ID do cliente é obrigatório." });
         }
-    },
+
+        const resultado = await ClienteModel.atualizaCliente(
+            id,
+            nome_completo,
+            cpf,
+            email,
+            logradouro,
+            numero,
+            bairro,
+            cidade,
+            estado,
+            cep
+        );
+
+        return res.status(200).json({
+            mensagem: "Cliente atualizado com sucesso!",
+            resultado
+        });
+
+    } catch (error) {
+        return res.status(500).json({ erro: error.message });
+    }
+},
+
 
     //ATUALIZAR TELEFONE
     /**
