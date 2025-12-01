@@ -334,6 +334,7 @@ const ClienteModel = {
             throw error;
         }
     }
+    
 };
 
 module.exports = {ClienteModel};

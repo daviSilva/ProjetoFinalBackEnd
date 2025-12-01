@@ -222,6 +222,7 @@ const ClienteController = {
             console.error("Erro ao deletar cliente:", error);
             return res.status(500).json({ erro: error.message });
         }
+        
     }
 
 };

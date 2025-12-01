@@ -162,6 +162,7 @@ criaNovaEntrega: async (req, res) => {
             });
         }
     }
+    
 }
 
 module.exports = { entregaController };

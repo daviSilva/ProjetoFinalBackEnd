@@ -153,6 +153,7 @@ const entregaModel = {
         } finally {
             connection.release();
         }
+        
     },
 }
 
