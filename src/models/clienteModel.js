@@ -259,10 +259,34 @@ const ClienteModel = {
         }
     },
     /**
+    
+     * Seleciona um cliente específico no banco de dados utilizando seu ID.
+     *
+     * @async
+     * @param {number} id - ID do cliente que deseja consultar.
      * 
-     * @param {*} id 
-     * @returns 
+     * @returns {Promise<object|null>} Retorna um objeto contendo os dados do cliente,
+     * ou `null` caso o ID informado não exista na base.
+     * 
+     * @throws Lança um erro caso ocorra alguma falha durante a execução da consulta SQL.
+     * 
+     * @example
+     * // Chamada:
+     * const cliente = await selecionarClientePorId(3);
+     * 
+     * // Possível retorno:
+     * {
+     *   IDCliente: 3,
+     *   nome_completo: "Renan Miazzo",
+     *   cpf: "12345678900",
+     *   email: "renan.miazzo@email.com",
+     *   cidade: "São Paulo"
+     * }
+     * 
+     * // Caso não exista:
+     * null
      */
+
     selecionerClientePorId: async (id) => {
         const connection = await pool.getConnection();
         try {
@@ -275,6 +299,27 @@ const ClienteModel = {
             throw error;
         }
     },
+ /**
+     * Deleta um cliente do banco de dados com base no ID informado.
+     *
+     * @async
+     * @param {number} id_cliente - ID do cliente que será removido da tabela 'clientes'.
+     * 
+     * @returns {Promise<object>} Retorna o resultado da operação SQL, incluindo informações
+     * sobre quantas linhas foram afetadas.
+     * 
+     * @throws Lança um erro caso a operação SQL falhe.
+     * 
+     * @example
+     * // Chamada da função no Model:
+     * await deleteCliente(4);
+     * 
+     * // Retorno esperado:
+     * {
+     *   affectedRows: 1,
+     *   warningStatus: 0
+     * }
+     */
 
     deleteCliente: async (id_cliente) => {
         const connection = await pool.getConnection();

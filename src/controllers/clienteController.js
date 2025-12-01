@@ -178,6 +178,26 @@ const ClienteController = {
         }
     },
 
+   // Deletar Cliente
+    /**
+     * Função responsável por deletar um cliente do sistema.
+     * 
+     * @param {Request} req  Objeto da requisição contendo o ID do cliente nos parâmetros da rota.
+     * @param {Response} res Objeto de resposta usado para retornar mensagens e status HTTP.
+     * 
+     * @returns {Promise<Response>} Retorna uma resposta JSON informando o sucesso ou erro da operação.
+     * 
+     * @example
+     * // Chamada da rota:
+     * DELETE /clientes/5
+     * 
+     * // Resposta esperada:
+     * {
+     *   "message": "Cliente deletado com sucesso!",
+     *   "data": { ... }
+     * }
+     */
+     
     DeleteCliente: async (req,res) => {
         try {
             const id_cliente = req.params.id;
