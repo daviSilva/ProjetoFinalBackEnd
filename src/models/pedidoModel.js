@@ -313,7 +313,12 @@ const PedidoModel = {
         connection.release();
     }
 },
-
+/**
+ * Deleta um pedido do banco de dados usando o ID informado.
+ *
+ * @param {number} id_pedido  ID do pedido que será deletado
+ * @returns Retorna o resultado da operação do MySQL (ex: affectedRows)
+ */
     DeletaPedido: async (id_pedido) => {
         const connection = await pool.getConnection();
         try {
