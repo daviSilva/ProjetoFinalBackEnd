@@ -189,6 +189,10 @@ const ClienteController = {
             if (!clienteExistente) {
                 return res.status(404).json({ erro: "Cliente não encontrado ou já deletado." });
             }
+            //se o status da entrega nao estiver em entregue, nao deixar deletar o cliente
+            if (clienteExistente.status_entrega !== 'entregue') {
+                return res.status(400).json({ erro: "Não é possível deletar o cliente. Existem entregas pendentes ou em andamento." });
+            }
             const resultado = await ClienteModel.deleteCliente(id_cliente);
             return res.status(200).json({
                 message: "Cliente deletado com sucesso!",
