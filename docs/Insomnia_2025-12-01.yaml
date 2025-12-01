@@ -41,7 +41,7 @@ collection:
         meta:
           id: req_ef4293e0652744ac933b6c40c8e3c9ba
           created: 1763401938229
-          modified: 1764010125025
+          modified: 1764587196963
           isPrivate: false
           description: ""
           sortKey: -1763401938229
@@ -50,8 +50,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"nome_completo" : "miazzo",
-              "cpf" : "46165252822",
+            	"nome_completo" : "miazz",
+              "cpf" : "46165252821",
               "email" : "davi.c.silva.reis@gmail.com",
               "logradouro" : "Rua do café",
               "numero" : 44,
@@ -121,7 +121,7 @@ collection:
         meta:
           id: req_b905771d90fd44f1ae0844ac641f1b71
           created: 1764586683254
-          modified: 1764586820823
+          modified: 1764587577028
           isPrivate: false
           description: ""
           sortKey: -1764586683254
@@ -141,7 +141,7 @@ collection:
           rebuildPath: true
         pathParameters:
           - name: id
-            value: "1"
+            value: ""
   - name: pedido
     meta:
       id: fld_8f14f6ec79094c79a88f2035fe3d1ff8
@@ -155,7 +155,7 @@ collection:
         meta:
           id: req_13e3397a95c94d47ab2185b3f9366b8c
           created: 1763404156244
-          modified: 1764010139619
+          modified: 1764587225110
           isPrivate: false
           description: ""
           sortKey: -1763404156244
@@ -164,8 +164,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_cliente" : 8,
-              "data_pedido" : "2025-12-12",
+            	"id_cliente" : 9,
+              "data_pedido" : "2025-12-1",
               "tipo_entrega": "urgente",
               "distancia_km" : 50,
               "peso_kg" : 60
@@ -278,7 +278,7 @@ collection:
         meta:
           id: req_845feaa2e375484cab343015a423361f
           created: 1763984778225
-          modified: 1764010686917
+          modified: 1764587342401
           isPrivate: false
           description: ""
           sortKey: -1763984778225
@@ -287,8 +287,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_pedido_fk" : 7,
-              "status_entrega" : ""
+            	"id_pedido_fk" : 8,
+              "status_entrega" : "pendente"
             }
         headers:
           - name: Content-Type
