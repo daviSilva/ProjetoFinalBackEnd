@@ -41,7 +41,7 @@ collection:
         meta:
           id: req_ef4293e0652744ac933b6c40c8e3c9ba
           created: 1763401938229
-          modified: 1764587196963
+          modified: 1764611919247
           isPrivate: false
           description: ""
           sortKey: -1763401938229
@@ -50,8 +50,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"nome_completo" : "miazz",
-              "cpf" : "46165252821",
+            	"nome_completo" : "Antonia",
+              "cpf" : "46165752823",
               "email" : "davi.c.silva.reis@gmail.com",
               "logradouro" : "Rua do café",
               "numero" : 44,
@@ -74,12 +74,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: http://localhost:8081/clientes/atualizacliente/:id
+      - url: http://localhost:8081/clientes/atualizacliente/11
         name: atualiza clientes
         meta:
           id: req_bd64c6a6e7d04022b91dc1be9bb8e88a
           created: 1764002235034
-          modified: 1764003365437
+          modified: 1764605910476
           isPrivate: false
           description: ""
           sortKey: -1764002235034
@@ -113,15 +113,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-        pathParameters:
-          - name: id
-            value: "3"
-      - url: http://localhost:8081/clientes/deletarcliente/:id
+      - url: http://localhost:8081/clientes/deletarcliente/7
         name: DELETA CLIENTES
         meta:
           id: req_b905771d90fd44f1ae0844ac641f1b71
           created: 1764586683254
-          modified: 1764587577028
+          modified: 1764613369102
           isPrivate: false
           description: ""
           sortKey: -1764586683254
@@ -139,9 +136,6 @@ collection:
             send: true
             store: true
           rebuildPath: true
-        pathParameters:
-          - name: id
-            value: ""
   - name: pedido
     meta:
       id: fld_8f14f6ec79094c79a88f2035fe3d1ff8
@@ -155,7 +149,7 @@ collection:
         meta:
           id: req_13e3397a95c94d47ab2185b3f9366b8c
           created: 1763404156244
-          modified: 1764587225110
+          modified: 1764611748429
           isPrivate: false
           description: ""
           sortKey: -1763404156244
@@ -164,11 +158,13 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_cliente" : 9,
-              "data_pedido" : "2025-12-1",
-              "tipo_entrega": "urgente",
-              "distancia_km" : 50,
-              "peso_kg" : 60
+              "id_cliente": 7,
+              "data_pedido": "2025-12-12",
+              "tipo_entrega": "normal",
+              "distancia_km": 10,
+              "peso_kg": 10,
+              "valor_base_km": 10,
+              "valor_base_kg": 10
             }
         headers:
           - name: Content-Type
@@ -242,6 +238,32 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: http://localhost:8081/pedidos/:id
+        name: DELETA PEDIDO
+        meta:
+          id: req_41e1dc3104dd4ab4bac8e23a816de4ea
+          created: 1764593943026
+          modified: 1764594126948
+          isPrivate: false
+          description: ""
+          sortKey: -1764593943026
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "4"
   - name: ENTREGA
     meta:
       id: fld_e1e4dc6bdbe64b34937993791b1db755
@@ -341,6 +363,32 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: http://localhost:8081/entregas/:id
+        name: DELETA ENTREGA
+        meta:
+          id: req_e507e29742064302aa77e30b7ffb7fba
+          created: 1764593963743
+          modified: 1764594404804
+          isPrivate: false
+          description: ""
+          sortKey: -1764593963743
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "3"
   - name: telefone
     meta:
       id: fld_28ffc11b6ce34fc49f94b00e21d9e5dc
@@ -440,6 +488,32 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: http://localhost:8081/telefones/:id
+        name: DELETE TELEFONE
+        meta:
+          id: req_4cae7dcfb4934d8096b5ff4700cec3c0
+          created: 1764594004870
+          modified: 1764594259209
+          isPrivate: false
+          description: ""
+          sortKey: -1764594004870
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "13"
 cookieJar:
   name: Default Jar
   meta:
