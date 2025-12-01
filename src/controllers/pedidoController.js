@@ -182,7 +182,14 @@ const pedidoController = {
         });
     }
 },
-
+/**
+ * Deleta um pedido com base no ID recebido pela URL.
+ * Antes de deletar, verifica se o pedido realmente existe.
+ *
+ * @param {*} req  Objeto da requisição contendo os parâmetros da rota
+ * @param {*} res  Objeto de resposta HTTP
+ * @returns Resposta JSON informando sucesso ou erro
+ */
     deletarPedido: async (req, res) => {
         try {
             const { id } = req.params;

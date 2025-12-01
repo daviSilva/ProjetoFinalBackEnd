@@ -130,8 +130,29 @@ const entregaModel = {
             throw error;
         } 
     },
-
-
+/**
+     * Remove uma entrega do banco de dados com base no ID informado.
+     *
+     * @async
+     * @param {number} idEntrega - ID da entrega que será deletada.
+     * 
+     * @returns {Promise<object>} Retorna um objeto contendo:
+     *  - affectedRows: número de registros excluídos (0 caso ID não exista).
+     *
+     * @throws Lança um erro caso a exclusão falhe no banco de dados.
+     *
+     * @example
+     * const resultado = await entregaModel.deletaEntrega(3);
+     * // retorno:
+     * {
+     *   affectedRows: 1
+     * }
+     *
+     * // Caso a entrega não exista:
+     * {
+     *   affectedRows: 0
+     * }
+     */
     deletaEntrega: async (idEntrega) => {
         const connection = await pool.getConnection();
         try {

@@ -129,7 +129,10 @@ const telefoneController = {
             });
         }
     },
-
+/**
+ * Deleta um telefone baseado no ID enviado na rota.
+ * Verifica se o telefone existe antes de excluir.
+ */
     deleteTelefone: async (req, res) => {
         try {
             const id_telefone = req.params.id;

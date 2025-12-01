@@ -99,7 +99,22 @@ const telefoneModel = {
 
         }
     },
-
+ // Deletar Telefone
+    /**
+ /**
+     * @function deleteTelefone
+     *
+     * @description
+     * Remove um telefone do banco de dados com base no ID informado.
+     * Se o ID não existir, o resultado retornará `affectedRows = 0`.
+     *
+     * @param {number} id_telefone - ID do telefone que será excluído.
+     *
+     * @returns {Promise<object>} Retorno contendo o resultado da exclusão,
+     * incluindo a quantidade de linhas afetadas.
+     *
+     * @throws {Error} Caso ocorra falha no processo de exclusão.
+     */
     deleteTelefone: async (id_telefone) => {
         const connection = await pool.getConnection();
         try {
@@ -113,7 +128,22 @@ const telefoneModel = {
             throw error;
         }
     },
-
+    // Selecionar Telefone por ID
+    /**
+     * @function selecionaTelefonePorId
+     *
+     * @description
+     * Busca um único telefone no banco de dados usando seu ID como parâmetro.
+     * Se nenhum telefone for encontrado, retorna um array vazio.
+     *
+     * @param {number} id_telefone - ID do telefone que será pesquisado.
+     *
+     * @returns {Promise<object[]>} Array contendo o telefone encontrado,
+     * ou array vazio caso não exista.
+     *
+     * @throws {Error} Caso ocorra falha na consulta ao banco.
+     */
+    
     selecionaTelefonePorId: async (id_telefone) => {
         const connection = await pool.getConnection();
         try {
