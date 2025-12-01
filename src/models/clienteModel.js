@@ -53,14 +53,6 @@ const ClienteModel = {
         try {
             await connection.beginTransaction();
 
-            // Verificar se o nome completo já existe
-            const sqlVerificaNome = 'SELECT nome_completo FROM clientes WHERE nome_completo = ?';
-            const [nomeExistente] = await connection.query(sqlVerificaNome, [nome_completo]);
-
-            if (nomeExistente.length > 0) {
-                throw new Error('Nome completo já cadastrado');
-            }
-
             // Inserir cliente
             const sqlCliente = `
                 INSERT INTO clientes 
@@ -334,7 +326,7 @@ const ClienteModel = {
             throw error;
         }
     }
-    
+
 };
 
 module.exports = {ClienteModel};

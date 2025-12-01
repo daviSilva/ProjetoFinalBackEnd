@@ -6,7 +6,7 @@ const  pedidoController  = require('../controllers/pedidoController');
 pedidoRoutes.get('/pedidos', pedidoController.selecionaTodosPedidos);
 
 //rota para criar pedido
-pedidoRoutes.post('/pedidos', pedidoController.criaPedido);
+pedidoRoutes.post('/pedidos', pedidoController.criarNovoPedido);
 
 //rota para atualizar pedido 
 pedidoRoutes.put('/pedidos/', pedidoController.atualizaPedido);

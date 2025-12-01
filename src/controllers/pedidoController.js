@@ -11,53 +11,42 @@ const pedidoController = {
     // Criar pedido
     
 
-    criaPedido: async (req, res) => {
-        try {
-            const {
-                id_cliente,
-                data_pedido,
-                tipo_entrega,
-                distancia_km,
-                peso_kg
-            } = req.body;
+   criarNovoPedido: async (req, res) => {
+    try {
+        const { 
+            id_cliente,
+            data_pedido,
+            tipo_entrega,
+            distancia_km,
+            peso_kg,
+            valor_base_km,
+            valor_base_kg
+        } = req.body;
 
-            // validação
-            if (!id_cliente || !data_pedido || !tipo_entrega || !distancia_km || !peso_kg) {
-                return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
-            }
-
-            if (tipo_entrega !== "normal" && tipo_entrega !== "urgente") {
-                return res.status(400).json({ erro: "O tipo de entrega deve ser 'normal' ou 'urgente'." });
-            }
-
-            // verificar se o pedido já existe para este cliente
-            const pedidoExistente = await pedidoModel.selecionaPedidoPorId(id_cliente);
-            if (pedidoExistente) {
-                return res.status(409).json({ erro: "Pedido já cadastrado para este cliente." });
-            }
-
-            // salvar
-            const resultado = await pedidoModel.criarPedido(
-                id_cliente,
-                data_pedido,
-                tipo_entrega,
-                distancia_km,
-                peso_kg
-            );
-
-            return res.status(201).json({
-                mensagem: "Pedido cadastrado com sucesso!",
-                resultado
-            });
-
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({
-                message: "Erro no servidor.",
-                erro: error.message
-            });
+        //validação dos campos obrigatórios
+        if (!id_cliente || !data_pedido || !tipo_entrega || distancia_km == null || peso_kg == null || valor_base_km == null || valor_base_kg == null) {
+            return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
         }
-    },
+        
+
+        const novoPedido = await pedidoModel.criarPedidoComEntrega(
+            id_cliente,
+            data_pedido,
+            tipo_entrega,
+            distancia_km,
+            peso_kg,
+            valor_base_km,
+            valor_base_kg
+        );
+
+        res.status(201).json(novoPedido);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ erro: "Erro ao criar pedido." });
+    }
+},
+
 
     // Selecionar todos
     /**

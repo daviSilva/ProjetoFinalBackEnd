@@ -1,6 +1,7 @@
 const { query } = require('../config/db');
 const {ClienteModel} = require('../models/clienteModel');
 const { telefoneModel } = require('../models/telefoneModel');
+const { entregaModel } = require('../models/entregaModel');
 
 const ClienteController = {
 
@@ -63,6 +64,7 @@ const ClienteController = {
             return res.status(500).json({ erro: error.message });
         }
     },
+
 
 
     // Selecionar todos os clientes
@@ -206,32 +208,39 @@ const ClienteController = {
      // SE TIVER ENTREGAS, MAS TODAS ESTIVEREM COM STATUS 'ENTREGUE', DELETA TAMBEM.
      // SE TIVER ENTREGAS COM STATUS 'PENDENTE' OU 'EM ANDAMENTO', NAO DELETA.
      // ASSIM GARANTIMOS A INTEGRIDADE DOS DADOS NO SISTEMA.
-    DeleteCliente: async (req,res) => {
+    DeleteCliente: async (req, res) => {
         try {
             const id_cliente = req.params.id;
-            if (!id_cliente || id_cliente.trim() === '') {
+            if (!id_cliente || String(id_cliente).trim() === '') {
                 return res.status(400).json({ erro: "ID do cliente é obrigatório." });
             }
-            //se o cliente ja foi deletado, dar mensagem de erro.
-            const clienteExistente = await ClienteModel.selecionerClientePorId(id_cliente);
-            if (!clienteExistente) {
-                return res.status(404).json({ erro: "Cliente não encontrado ou já deletado." });
+
+            // procura o cliente usando o model
+            const cliente = await ClienteModel.selecionerClientePorId(id_cliente);
+            if (!cliente) {
+                return res.status(404).json({ erro: "Cliente não encontrado." });
             }
-            //se o status da entrega nao estiver em entregue, nao deixar deletar o cliente
-            if (clienteExistente.status_entrega !== 'entregue') {
-                return res.status(400).json({ erro: "Não é possível deletar o cliente. Existem entregas pendentes ou em andamento." });
+
+            // busca entregas do cliente usando o model
+            const entregas = await entregaModel.selecionaEntregasPorCliente(id_cliente) || [];
+
+            // verificação simples: percorre as entregas e bloqueia se encontrar status pendente ou em andamento
+            for (let i = 0; i < entregas.length; i++) {
+                const status = String(entregas[i].status_entrega || '').toLowerCase();
+                if (status === 'pendente' || status === 'em andamento') {
+                    return res.status(400).json({ erro: "Não é possível deletar o cliente. Existem entregas pendentes ou em andamento." });
+                }
             }
+
+            // realiza deleção via model
             const resultado = await ClienteModel.deleteCliente(id_cliente);
-            return res.status(200).json({
-                message: "Cliente deletado com sucesso!",
-                data: resultado
-            });
+            return res.status(200).json({ message: "Cliente deletado com sucesso.", data: resultado });
+
         } catch (error) {
             console.error("Erro ao deletar cliente:", error);
             return res.status(500).json({ erro: error.message });
         }
-
-    }
+    },
 
 };
 

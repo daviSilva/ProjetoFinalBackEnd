@@ -6,7 +6,7 @@ const { entregaController } = require('../controllers/entregaController');
 entregaRoutes.get('/entregas', entregaController.mostraTodasEntregas);
 
 // Rota para criar uma entrega
-entregaRoutes.post('/entregas', entregaController.criaNovaEntrega);
+entregaRoutes.post('/entregas', entregaController.criarNovaEntrega);
 
 //ROTA PARA ATUALIZAR O STATUS DA ENTREGA
 entregaRoutes.put('/entregas', entregaController.atualizaEntrega);

@@ -49,13 +49,15 @@ const PedidoModel = {
      *   "valor_kg": 600
      * }
      */
-     
-    criarPedido: async (
+
+    criarPedidoComEntrega: async (
         id_cliente,
         data_pedido,
         tipo_entrega,
         distancia_km,
-        peso_kg
+        peso_kg,
+        valor_base_km,
+        valor_base_kg
     ) => {
 
         const connection = await pool.getConnection();
@@ -63,67 +65,120 @@ const PedidoModel = {
         try {
             await connection.beginTransaction();
 
-            // Verifica se o cliente existe
-            const sqlVerificaCliente = 'SELECT IDCliente FROM clientes WHERE IDCliente = ?';
-            const [clienteExiste] = await connection.query(sqlVerificaCliente, [id_cliente]);
+            // 1. Verifica se o cliente existe
+            const sqlCliente = `SELECT IDCliente FROM clientes WHERE IDCliente = ?`;
+            const [clienteExiste] = await connection.query(sqlCliente, [id_cliente]);
 
             if (clienteExiste.length === 0) {
                 throw new Error("Cliente informado não existe.");
             }
 
-            // -- CÁLCULOS DO PEDIDO 
-            const valor_km = distancia_km * VALOR_BASE_KM;
-            let valor_kg = peso_kg * VALOR_BASE_KG;
-            
-            let valor_total = valor_km + valor_kg;
-            
-
-            // Entrega urgente aumenta 30%
-            if (tipo_entrega === "urgente") {
-                valor_total *= 1.3;
-            }
-            // Taxa adicional para peso acima de 50kg
-            if (peso_kg > 50) {
-                valor_kg += VALOR_PESO_TAXA;
-            }
-            if (valor_total > 500) {
-                valor_total *= 0.9; // Aplica desconto de 10%
-            }
-            // Inserir pedido
-            const sql = `
+            // 2. Inserir pedido
+            const sqlInsertPedido = `
                 INSERT INTO pedidos
-                (id_cliente_fk, data_pedido, tipo_entrega, distancia_km, peso_kg, valor_km, valor_kg, valor_total)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    (id_cliente_fk, data_pedido, tipo_entrega, distancia_km, peso_kg, valor_base_km, valor_base_kg, valor_km, valor_kg, valor_total)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
 
-            const values = [
+            const pedidoValues = [
                 id_cliente,
                 data_pedido,
                 tipo_entrega,
                 distancia_km,
                 peso_kg,
-                valor_km,
-                valor_kg,
-                valor_total
+                valor_base_km,
+                valor_base_kg,
+                distancia_km * valor_base_km,
+                peso_kg * valor_base_kg,
+                (distancia_km * valor_base_km) + (peso_kg * valor_base_kg) // valor_total inicial, ajustes depois
             ];
 
-            const [rowsPedido] = await connection.query(sql, values);
+            const [pedidoResult] = await connection.query(sqlInsertPedido, pedidoValues);
+            const id_pedido = pedidoResult.insertId;
+
+            // ==============================
+            // 3. CÁLCULOS DA ENTREGA
+            // ==============================
+
+            const valor_distancia = distancia_km * valor_base_km;
+            const valor_peso = peso_kg * valor_base_kg;
+            const valor_base_total = valor_distancia + valor_peso;
+
+            // Acrescimo urgente (20%)
+            const acrescimo = tipo_entrega === "urgente"
+                ? valor_base_total * 0.20
+                : 0;
+
+            let valor_final = valor_base_total + acrescimo;
+
+            // Desconto se ultrapassar 500
+            const desconto = valor_final > 500
+                ? valor_final * 0.10
+                : 0;
+
+            valor_final -= desconto;
+
+            // Taxa extra se peso > 50 kg
+            const taxa_extra = peso_kg > 50 ? 15 : 0;
+
+            valor_final += taxa_extra;
+
+            // 4. Inserir entrega vinculada ao pedido
+            const sqlInsertEntrega = `
+                INSERT INTO entregas
+                    (id_pedido_fk, valor_distancia, valor_peso, acrescimo, desconto, taxa_extra, valor_final, status_entrega)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const entregaValues = [
+                id_pedido,
+                valor_distancia,
+                valor_peso,
+                acrescimo,
+                desconto,
+                taxa_extra,
+                valor_final,
+                "pendente"
+            ];
+
+            const [entregaResult] = await connection.query(sqlInsertEntrega, entregaValues);
 
             await connection.commit();
 
             return {
-                id_pedido: rowsPedido.insertId,
-                valor_total,
-                valor_km,
-                valor_kg
+                mensagem: "Pedido e entrega criados com sucesso!",
+                pedido: {
+                    id_pedido,
+                    id_cliente,
+                    data_pedido,
+                    tipo_entrega,
+                    distancia_km,
+                    peso_kg,
+                    valor_base_km,
+                    valor_base_kg,
+                },
+                entrega: {
+                    id_entrega: entregaResult.insertId,
+                    id_pedido_fk: id_pedido,
+                    valor_distancia,
+                    valor_peso,
+                    acrescimo,
+                    desconto,
+                    taxa_extra,
+                    valor_final,
+                    status_entrega: "pendente"
+                }
             };
 
         } catch (error) {
             await connection.rollback();
             throw error;
 
-        } 
+        } finally {
+            connection.release();
+        }
     },
+
 
 
 
@@ -158,7 +213,7 @@ const PedidoModel = {
      *   }
      * ]
      */
-     
+
     selecionaTodosPedidos: async () => {
         const connection = await pool.getConnection();
 
@@ -170,7 +225,7 @@ const PedidoModel = {
         } catch (error) {
             throw error;
 
-        } 
+        }
     },
 
 
@@ -199,7 +254,7 @@ const PedidoModel = {
      *   "valor_total": 780
      * }
      */
-   
+
     selecionaPedidoPorId: async (id) => {
         const connection = await pool.getConnection();
 
@@ -211,7 +266,7 @@ const PedidoModel = {
         } catch (error) {
             throw error;
 
-        } 
+        }
     },
     /**
      * @param {number} id_pedido - ID do pedido a ser atualizado.
@@ -237,44 +292,44 @@ const PedidoModel = {
      *   "resultado": { "affectedRows": 1 }
      * }
      */
-    
-    atualizaPedido : async (id_pedido, tipo_entrega, distancia_km, peso_kg) => {
-    const connection = await pool.getConnection();
 
-    // Constantes fixas
-    const VALOR_BASE_KM = 10;
-    const VALOR_BASE_KG = 20;
-    const TAXA_PESO_EXTRA = 15;
+    atualizaPedido: async (id_pedido, tipo_entrega, distancia_km, peso_kg) => {
+        const connection = await pool.getConnection();
 
-    try {
-        await connection.beginTransaction();
+        // Constantes fixas
+        const VALOR_BASE_KM = 10;
+        const VALOR_BASE_KG = 20;
+        const TAXA_PESO_EXTRA = 15;
 
-        // ---- CÁLCULOS ----
-        const valor_km = distancia_km * VALOR_BASE_KM;
-        let valor_kg = peso_kg * VALOR_BASE_KG;
-        let valor_total = valor_km + valor_kg;
+        try {
+            await connection.beginTransaction();
 
-        // acréscimo para urgente
-        if (tipo_entrega === "urgente") {
-            valor_total *= 1.30;
-        }
+            // ---- CÁLCULOS ----
+            const valor_km = distancia_km * VALOR_BASE_KM;
+            let valor_kg = peso_kg * VALOR_BASE_KG;
+            let valor_total = valor_km + valor_kg;
 
-        // taxa extra se peso > 50 (aplica ao valor_kg e ao total)
-        let taxa_extra = 0;
-        if (peso_kg > 50) {
-            taxa_extra = TAXA_PESO_EXTRA;
-            valor_kg += taxa_extra;
-            valor_total += taxa_extra;
-        }
+            // acréscimo para urgente
+            if (tipo_entrega === "urgente") {
+                valor_total *= 1.30;
+            }
 
-        // desconto se > 500 (10%)
-        let desconto = 0;
-        if (valor_total > 500) {
-            desconto = valor_total * 0.10;
-            valor_total -= desconto;
-        }
- 
-        const sql = `
+            // taxa extra se peso > 50 (aplica ao valor_kg e ao total)
+            let taxa_extra = 0;
+            if (peso_kg > 50) {
+                taxa_extra = TAXA_PESO_EXTRA;
+                valor_kg += taxa_extra;
+                valor_total += taxa_extra;
+            }
+
+            // desconto se > 500 (10%)
+            let desconto = 0;
+            if (valor_total > 500) {
+                desconto = valor_total * 0.10;
+                valor_total -= desconto;
+            }
+
+            const sql = `
             UPDATE pedidos
             SET tipo_entrega = ?, 
                 distancia_km = ?, 
@@ -284,33 +339,33 @@ const PedidoModel = {
                 valor_total = ?
             WHERE IDPedido = ?
         `;
- 
-        const values = [
-            tipo_entrega,
-            distancia_km,
-            peso_kg,
-            valor_km,
-            valor_kg,
-            valor_total,
-            id_pedido
-        ];
- 
-        const [rows] = await connection.query(sql, values);
- 
-        await connection.commit();
-        return rows;
- 
-    } catch (error) {
-        await connection.rollback();
-        throw error;
-    } 
-},
-/**
- * Deleta um pedido do banco de dados usando o ID informado.
- *
- * @param {number} id_pedido  ID do pedido que será deletado
- * @returns Retorna o resultado da operação do MySQL (ex: affectedRows)
- */
+
+            const values = [
+                tipo_entrega,
+                distancia_km,
+                peso_kg,
+                valor_km,
+                valor_kg,
+                valor_total,
+                id_pedido
+            ];
+
+            const [rows] = await connection.query(sql, values);
+
+            await connection.commit();
+            return rows;
+
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        }
+    },
+    /**
+     * Deleta um pedido do banco de dados usando o ID informado.
+     *
+     * @param {number} id_pedido  ID do pedido que será deletado
+     * @returns Retorna o resultado da operação do MySQL (ex: affectedRows)
+     */
     DeletaPedido: async (id_pedido) => {
         const connection = await pool.getConnection();
         try {
@@ -324,7 +379,7 @@ const PedidoModel = {
             throw error;
         }
     }
- 
+
 };
 
 module.exports = PedidoModel;

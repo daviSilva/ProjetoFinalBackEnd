@@ -52,43 +52,37 @@ const entregaController = {
          * @returns {JSON} Mensagem de sucesso e dados da entrega criada.
          */
 
-    criaNovaEntrega: async (req, res) => {
+    criarNovaEntrega: async (req, res) => {
         try {
-            const { id_pedido_fk, status_entrega } = req.body;
+            const {
+                id_cliente,
+                data_pedido,
+                tipo_entrega,
+                distancia_km,
+                peso_kg,
+                valor_base_km,
+                valor_base_kg
+            } = req.body;
 
-            if (!id_pedido_fk) {
-                return res.status(400).json({
-                    erro: "O campo id_pedido_fk é obrigatório."
-                });
-            }
-            if (status_entrega && typeof status_entrega !== 'string') {
-                return res.status(400).json({
-                    erro: "O campo status_entrega deve ser uma string."
-                });
-            }
-            if (status_entrega && !['pendente', 'em andamento', 'entregue',].includes(status_entrega)) {
-                return res.status(400).json({
-                    erro: "O campo status_entrega deve ser 'pendente', 'em andamento' ou 'entregue'."
-                });
-            }
-
-            const resultado = await entregaModel.criarNovaEntrega(
-                id_pedido_fk,
-                status_entrega || 'pendente'
+            const novoPedido = await entregaModel.criarNovaEntrega(
+                id_cliente,
+                data_pedido,
+                tipo_entrega,
+                distancia_km,
+                peso_kg,
+                valor_base_km,
+                valor_base_kg
             );
 
-            return res.status(201).json({
-                mensagem: "Entrega criada com sucesso!",
-                entrega: resultado
-            });
+            res.status(201).json(novoPedido);
 
         } catch (error) {
-            return res.status(500).json({
-                erro: "Erro interno no servidor.",
-                detalhes: error.message
-            });
+            console.error(error);
+            res.status(500).json({ erro: "Erro no servidor." });
         }
+
     },
+
 
 
     /**
