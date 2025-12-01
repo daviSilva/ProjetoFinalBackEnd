@@ -98,7 +98,34 @@ const telefoneModel = {
             throw error;
 
         }
-    }
+    },
+
+    deleteTelefone: async (id_telefone) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'DELETE FROM telefones WHERE IDTelefone = ?';
+            const values = [id_telefone];
+            const [result] = await connection.query(sql, values);
+            connection.commit();
+            return result;
+        } catch (error) {
+            connection.rollback();
+            throw error;
+        }
+    },
+
+    selecionaTelefonePorId: async (id_telefone) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'SELECT * FROM telefones WHERE IDTelefone = ?';
+            const values = [id_telefone];
+            const [rows] = await connection.query(sql, values);
+            connection.commit();
+            return rows;
+        } catch (error) {
+            connection.rollback();
+            throw error;
+        }}
 };
 
 module.exports = { telefoneModel };

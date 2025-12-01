@@ -183,6 +183,34 @@ const pedidoController = {
     }
 },
 
+    deletarPedido: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            if (!id) {
+                return res.status(400).json({ erro: "ID do pedido é obrigatório." });
+            }
+            const pedidoExistente = await pedidoModel.selecionaPedidoPorId(id);
+            if (!pedidoExistente) {
+                return res.status(404).json({ erro: "Pedido não encontrado." });
+            }
+        
+            const resultado = await pedidoModel.DeletaPedido(id);
+            return res.status(200).json({
+                mensagem: "Pedido deletado com sucesso!",
+                resultado
+            });
+
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                message: "Erro no servidor.",
+                erro: error.message
+            });
+            
+        }
+    }
+
 
 
 };

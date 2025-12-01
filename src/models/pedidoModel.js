@@ -312,7 +312,21 @@ const PedidoModel = {
     } finally {
         connection.release();
     }
-}
+},
+
+    DeletaPedido: async (id_pedido) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'DELETE FROM pedidos WHERE IDPedido = ?';
+            const values = [id_pedido];
+            const [result] = await connection.query(sql, values);
+            connection.commit();
+            return result;
+        } catch (error) {
+            connection.rollback();
+            throw error;
+        }
+    }
  
 };
 

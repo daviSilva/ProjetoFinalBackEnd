@@ -128,6 +128,32 @@ const telefoneController = {
                 detalhes: error.message
             });
         }
+    },
+
+    deleteTelefone: async (req, res) => {
+        try {
+            const id_telefone = req.params.id;
+            if (!id_telefone) {
+                return res.status(400).json({ erro: "ID do telefone é obrigatório." });
+            }
+            //verificar se o telefone existe antes de deletar
+            const telefoneExistente = await telefoneModel.selecionaTelefonePorId(id_telefone);
+            const telefoneEncontrado = telefoneExistente[0];
+            if (!telefoneEncontrado) {
+                return res.status(404).json({ erro: "Telefone não encontrado." });
+            }
+            const resultado = await telefoneModel.deleteTelefone(id_telefone);
+            return res.status(200).json({
+                mensagem: "Telefone deletado com sucesso!",
+                resultado
+            });
+        } catch (error) {
+            return res.status(500).json({
+                erro: "Erro ao deletar telefone.",
+                detalhes: error.message
+            }); 
+            
+        }
     }
 }
 module.exports = { telefoneController };
