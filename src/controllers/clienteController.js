@@ -197,7 +197,15 @@ const ClienteController = {
      *   "data": { ... }
      * }
      */
-     
+     // ELE DELETA EM FORMA DE CASCATA, SE TIVER PEDIDOS E ENTREGAS, DELETA TUDO JUNTO.
+     // PARA EVITAR PROBLEMAS DE INTEGRIDADE REFERENCIAL.
+     // ANTES DE DELETAR, VERIFICA SE O CLIENTE EXISTE E SE TEM ENTREGAS PENDENTES.
+     // SE TIVER ENTREGAS PENDENTES, NAO DELETA E RETORNA UMA MENSAGEM DE ERRO.
+     // SE NAO TIVER, DELETA O CLIENTE E RETORNA MENSAGEM DE SUCESSO.
+     // SE O CLIENTE JA TIVER SIDO DELETADO, RETORNA MENSAGEM DE ERRO TAMBEM.
+     // SE TIVER ENTREGAS, MAS TODAS ESTIVEREM COM STATUS 'ENTREGUE', DELETA TAMBEM.
+     // SE TIVER ENTREGAS COM STATUS 'PENDENTE' OU 'EM ANDAMENTO', NAO DELETA.
+     // ASSIM GARANTIMOS A INTEGRIDADE DOS DADOS NO SISTEMA.
     DeleteCliente: async (req,res) => {
         try {
             const id_cliente = req.params.id;
@@ -222,7 +230,7 @@ const ClienteController = {
             console.error("Erro ao deletar cliente:", error);
             return res.status(500).json({ erro: error.message });
         }
-        
+
     }
 
 };
