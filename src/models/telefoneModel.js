@@ -99,7 +99,13 @@ const telefoneModel = {
 
         }
     },
-
+ // Deletar Telefone
+    /**
+ * Exclui um telefone específico com base no ID fornecido.
+ * 
+ * @param {*} id_telefone - ID do telefone que será excluído.
+ * @returns Retorna o resultado da operação de exclusão.
+ */
     deleteTelefone: async (id_telefone) => {
         const connection = await pool.getConnection();
         try {
@@ -113,7 +119,13 @@ const telefoneModel = {
             throw error;
         }
     },
-
+    // Selecionar Telefone por ID
+/**
+ * Busca um telefone específico no banco utilizando o ID.
+ * 
+ * @param {*} id_telefone - ID do telefone a ser buscado.
+ * @returns Retorna o telefone encontrado (ou array vazio se não existir).
+ */
     selecionaTelefonePorId: async (id_telefone) => {
         const connection = await pool.getConnection();
         try {
