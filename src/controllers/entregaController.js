@@ -61,6 +61,16 @@ criaNovaEntrega: async (req, res) => {
                 erro: "O campo id_pedido_fk é obrigatório."
             });
         }
+        if (status_entrega && typeof status_entrega !== 'string' ) {
+            return res.status(400).json({
+                erro: "O campo status_entrega deve ser uma string."
+            });
+        }
+        if (status_entrega && !['pendente', 'em andamento', 'entregue',].includes(status_entrega)) {
+            return res.status(400).json({
+                erro: "O campo status_entrega deve ser 'pendente', 'em andamento' ou 'entregue'."
+            });
+        }
 
         const resultado = await entregaModel.criarNovaEntrega(
             id_pedido_fk,
