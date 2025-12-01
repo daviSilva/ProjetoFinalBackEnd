@@ -176,6 +176,28 @@ const ClienteController = {
             console.error ("Erro ao atualizar telefone:", error)
             return res.status(500).json({ erro: error.message });
         }
+    },
+
+    DeleteCliente: async (req,res) => {
+        try {
+            const id_cliente = req.params.id;
+            if (!id_cliente || id_cliente.trim() === '') {
+                return res.status(400).json({ erro: "ID do cliente é obrigatório." });
+            }
+            //se o cliente ja foi deletado, dar mensagem de erro.
+            const clienteExistente = await ClienteModel.selecionerClientePorId(id_cliente);
+            if (!clienteExistente) {
+                return res.status(404).json({ erro: "Cliente não encontrado ou já deletado." });
+            }
+            const resultado = await ClienteModel.deleteCliente(id_cliente);
+            return res.status(200).json({
+                message: "Cliente deletado com sucesso!",
+                data: resultado
+            });
+        } catch (error) {
+            console.error("Erro ao deletar cliente:", error);
+            return res.status(500).json({ erro: error.message });
+        }
     }
 
 };

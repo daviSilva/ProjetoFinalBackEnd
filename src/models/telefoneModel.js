@@ -99,7 +99,6 @@ const telefoneModel = {
 
         }
     }
-
 };
 
 module.exports = { telefoneModel };

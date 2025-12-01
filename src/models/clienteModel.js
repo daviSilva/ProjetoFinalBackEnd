@@ -274,6 +274,20 @@ const ClienteModel = {
             connection.rollback();
             throw error;
         }
+    },
+
+    deleteCliente: async (id_cliente) => {
+        const connection = await pool.getConnection();
+        try {
+            const sql = 'DELETE FROM clientes WHERE IDCliente = ?';
+            const [rows] = await connection.query(sql, [id_cliente]);
+            connection.commit();
+            return rows;
+        } catch (error) {
+            console.log(error);
+            connection.rollback();
+            throw error;
+        }
     }
 };
 

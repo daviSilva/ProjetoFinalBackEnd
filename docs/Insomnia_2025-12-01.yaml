@@ -41,7 +41,7 @@ collection:
         meta:
           id: req_ef4293e0652744ac933b6c40c8e3c9ba
           created: 1763401938229
-          modified: 1763405362566
+          modified: 1764010125025
           isPrivate: false
           description: ""
           sortKey: -1763401938229
@@ -50,8 +50,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"nome_completo" : "Da",
-              "cpf" : "46165252851",
+            	"nome_completo" : "miazzo",
+              "cpf" : "46165252822",
               "email" : "davi.c.silva.reis@gmail.com",
               "logradouro" : "Rua do café",
               "numero" : 44,
@@ -59,7 +59,7 @@ collection:
               "cidade": "sumacity",
               "estado": "sp",
               "cep" : "13177250",
-            	"telefones" : [ 19982684044, 19993833]
+            	"telefones" : [ 19982685044, 19984633]
             }
         headers:
           - name: Content-Type
@@ -116,6 +116,32 @@ collection:
         pathParameters:
           - name: id
             value: "3"
+      - url: http://localhost:8081/clientes/deletarcliente/:id
+        name: DELETA CLIENTES
+        meta:
+          id: req_b905771d90fd44f1ae0844ac641f1b71
+          created: 1764586683254
+          modified: 1764586820823
+          isPrivate: false
+          description: ""
+          sortKey: -1764586683254
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/12.1.0
+            description: ""
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+        pathParameters:
+          - name: id
+            value: "1"
   - name: pedido
     meta:
       id: fld_8f14f6ec79094c79a88f2035fe3d1ff8
@@ -129,7 +155,7 @@ collection:
         meta:
           id: req_13e3397a95c94d47ab2185b3f9366b8c
           created: 1763404156244
-          modified: 1763987996309
+          modified: 1764010139619
           isPrivate: false
           description: ""
           sortKey: -1763404156244
@@ -138,11 +164,11 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_cliente" : 4,
-              "data_pedido" :"2025-12-12",
+            	"id_cliente" : 8,
+              "data_pedido" : "2025-12-12",
               "tipo_entrega": "urgente",
-              "distancia_km" : 23,
-              "peso_kg" : 20
+              "distancia_km" : 50,
+              "peso_kg" : 60
             }
         headers:
           - name: Content-Type
@@ -183,7 +209,7 @@ collection:
         meta:
           id: req_9467d889b094458c82070122cea944ce
           created: 1763405559689
-          modified: 1763984384570
+          modified: 1764007726056
           isPrivate: false
           description: ""
           sortKey: -1763405559689
@@ -192,7 +218,7 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_cliente" : 1,
+            	"id_cliente" : 4,
               "data_pedido" : "",
             	"tipo_entrega" : "urgente"	,
               "distancia_km" : 50,
@@ -252,7 +278,7 @@ collection:
         meta:
           id: req_845feaa2e375484cab343015a423361f
           created: 1763984778225
-          modified: 1763989690694
+          modified: 1764010686917
           isPrivate: false
           description: ""
           sortKey: -1763984778225
@@ -261,7 +287,7 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"id_pedido_fk" : 1,
+            	"id_pedido_fk" : 7,
               "status_entrega" : ""
             }
         headers:
@@ -284,7 +310,7 @@ collection:
         meta:
           id: req_da839caafb7e48f2a91cf49d2485cdb6
           created: 1763987947593
-          modified: 1763988082901
+          modified: 1764008851395
           isPrivate: false
           description: ""
           sortKey: -1763987947593
@@ -297,7 +323,7 @@ collection:
             }
         parameters:
           - name: id
-            value: "1"
+            value: "5"
             description: ""
             disabled: false
         headers:
