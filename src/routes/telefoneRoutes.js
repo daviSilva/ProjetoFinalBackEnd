@@ -8,4 +8,6 @@ telefoneRoutes.post('/telefones', telefoneController.criarTelefone);
 telefoneRoutes.put('/telefones', telefoneController.atualizaTelefone);
 //rota para selecionar telefones cadastrados
 telefoneRoutes.get('/telefones', telefoneController.selecionaTodosTelefones);
+
+telefoneRoutes.delete('/telefones/:id', telefoneController.deleteTelefone);
 module.exports = { telefoneRoutes };

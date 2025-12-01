@@ -11,4 +11,5 @@ entregaRoutes.post('/entregas', entregaController.criaNovaEntrega);
 //ROTA PARA ATUALIZAR O STATUS DA ENTREGA
 entregaRoutes.put('/entregas', entregaController.atualizaEntrega);
 
+entregaRoutes.delete('/entregas/:id', entregaController.deletaEntrega);
 module.exports = { entregaRoutes };
