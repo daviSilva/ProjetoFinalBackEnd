@@ -122,9 +122,7 @@ const PedidoModel = {
             await connection.rollback();
             throw error;
 
-        } finally {
-            connection.release();
-        }
+        } 
     },
 
 
@@ -172,9 +170,7 @@ const PedidoModel = {
         } catch (error) {
             throw error;
 
-        } finally {
-            connection.release();
-        }
+        } 
     },
 
 
@@ -215,9 +211,7 @@ const PedidoModel = {
         } catch (error) {
             throw error;
 
-        } finally {
-            connection.release();
-        }
+        } 
     },
     /**
      * @param {number} id_pedido - ID do pedido a ser atualizado.
@@ -309,9 +303,7 @@ const PedidoModel = {
     } catch (error) {
         await connection.rollback();
         throw error;
-    } finally {
-        connection.release();
-    }
+    } 
 },
 
     DeletaPedido: async (id_pedido) => {

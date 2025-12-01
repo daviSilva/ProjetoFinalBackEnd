@@ -13,9 +13,7 @@ const entregaModel = {
             return rows;
         } catch (error) {
             throw error;
-        } finally {
-            connection.release();
-        }
+        } 
     },
 
 
@@ -111,8 +109,6 @@ const entregaModel = {
         } catch (error) {
             await connection.rollback();
             throw error;
-        } finally {
-            connection.release();
         }
     },
 
@@ -132,9 +128,7 @@ const entregaModel = {
             };
         } catch (error) {
             throw error;
-        } finally {
-            connection.release();
-        }
+        } 
     },
 
 
@@ -150,10 +144,7 @@ const entregaModel = {
             };
         } catch (error) {
             throw error;
-        } finally {
-            connection.release();
-        }
-
+        } 
     },
 }
 
