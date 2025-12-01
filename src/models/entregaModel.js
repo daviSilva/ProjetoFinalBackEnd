@@ -121,7 +121,7 @@ const entregaModel = {
     atualizaEntrega: async (idEntrega, status_entrega) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'UPDATE entregas SET status_entrega = ? WHERE id_entrega = ?';
+            const sql = 'UPDATE entregas SET status_entrega = ? WHERE IDEntrega = ?';
             const values = [status_entrega, idEntrega];
 
             const [result] = await connection.query(sql, values);
@@ -141,7 +141,7 @@ const entregaModel = {
     deletaEntrega: async (idEntrega) => {
         const connection = await pool.getConnection();
         try {
-            const sql = 'DELETE FROM entregas WHERE id_entrega = ?';
+            const sql = 'DELETE FROM entregas WHERE IDEntrega = ?';
             const values = [idEntrega];
             const [result] = await connection.query(sql, values);
 
@@ -153,7 +153,7 @@ const entregaModel = {
         } finally {
             connection.release();
         }
-        
+
     },
 }
 

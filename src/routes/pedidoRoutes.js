@@ -11,5 +11,5 @@ pedidoRoutes.post('/pedidos', pedidoController.criaPedido);
 //rota para atualizar pedido 
 pedidoRoutes.put('/pedidos/', pedidoController.atualizaPedido);
 
-pedidoRoutes.delete('/pedidos/:id', pedidoController.deletaPedido);
+pedidoRoutes.delete('/pedidos/:id', pedidoController.deletarPedido);
 module.exports = { pedidoRoutes };
