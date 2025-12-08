@@ -25,16 +25,16 @@ const telefoneController = {
      */
     criarTelefone: async (req, res) => {
         try {
-            const { id_cliente_fk, numero_telefone,} = req.body;
+            const { id_cliente_fk, numero_telefone, } = req.body;
 
-            if (!id_cliente_fk || !numero_telefone ) {
+            if (!id_cliente_fk || !numero_telefone) {
                 return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
             }
 
             const resultado = await telefoneModel.adicionarTelefone(
                 id_cliente_fk,
                 numero_telefone,
-    
+
             );
 
             return res.status(201).json({
@@ -129,10 +129,10 @@ const telefoneController = {
             });
         }
     },
-/**
- * Deleta um telefone baseado no ID enviado na rota.
- * Verifica se o telefone existe antes de excluir.
- */
+    /**
+     * Deleta um telefone baseado no ID enviado na rota.
+     * Verifica se o telefone existe antes de excluir.
+     */
     deleteTelefone: async (req, res) => {
         try {
             const id_telefone = req.params.id;
@@ -154,8 +154,8 @@ const telefoneController = {
             return res.status(500).json({
                 erro: "Erro ao deletar telefone.",
                 detalhes: error.message
-            }); 
-            
+            });
+
         }
     }
 }

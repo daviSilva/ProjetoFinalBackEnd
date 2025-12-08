@@ -150,7 +150,7 @@ const ClienteModel = {
  *   }
  * ]
  */
-     
+
     selecionaTodosClientes: async () => {
         const connection = await pool.getConnection();
 
@@ -234,8 +234,8 @@ const ClienteModel = {
         } catch (error) {
             await connection.rollback();
             throw error;
-            
-        }   
+
+        }
     },
 
     selecionarClientePorCpf: async (cpf) => {
@@ -291,27 +291,27 @@ const ClienteModel = {
             throw error;
         }
     },
- /**
-     * Deleta um cliente do banco de dados com base no ID informado.
-     *
-     * @async
-     * @param {number} id_cliente - ID do cliente que será removido da tabela 'clientes'.
-     * 
-     * @returns {Promise<object>} Retorna o resultado da operação SQL, incluindo informações
-     * sobre quantas linhas foram afetadas.
-     * 
-     * @throws Lança um erro caso a operação SQL falhe.
-     * 
-     * @example
-     * // Chamada da função no Model:
-     * await deleteCliente(4);
-     * 
-     * // Retorno esperado:
-     * {
-     *   affectedRows: 1,
-     *   warningStatus: 0
-     * }
-     */
+    /**
+        * Deleta um cliente do banco de dados com base no ID informado.
+        *
+        * @async
+        * @param {number} id_cliente - ID do cliente que será removido da tabela 'clientes'.
+        * 
+        * @returns {Promise<object>} Retorna o resultado da operação SQL, incluindo informações
+        * sobre quantas linhas foram afetadas.
+        * 
+        * @throws Lança um erro caso a operação SQL falhe.
+        * 
+        * @example
+        * // Chamada da função no Model:
+        * await deleteCliente(4);
+        * 
+        * // Retorno esperado:
+        * {
+        *   affectedRows: 1,
+        *   warningStatus: 0
+        * }
+        */
 
     deleteCliente: async (id_cliente) => {
         const connection = await pool.getConnection();
@@ -329,4 +329,4 @@ const ClienteModel = {
 
 };
 
-module.exports = {ClienteModel};
+module.exports = { ClienteModel };

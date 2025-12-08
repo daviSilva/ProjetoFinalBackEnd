@@ -3,49 +3,49 @@ const pedidoModel = require('../models/pedidoModel');
 
 const pedidoController = {
 
-   /**
-    * 
-    * Criar um novo pedido no sistema.
-     * Valida os dados enviados, verifica duplicidade e salva no banco
-    */
+    /**
+     * 
+     * Criar um novo pedido no sistema.
+      * Valida os dados enviados, verifica duplicidade e salva no banco
+     */
     // Criar pedido
-    
 
-   criarNovoPedido: async (req, res) => {
-    try {
-        const { 
-            id_cliente,
-            data_pedido,
-            tipo_entrega,
-            distancia_km,
-            peso_kg,
-            valor_base_km,
-            valor_base_kg
-        } = req.body;
 
-        //validação dos campos obrigatórios
-        if (!id_cliente || !data_pedido || !tipo_entrega || distancia_km == null || peso_kg == null || valor_base_km == null || valor_base_kg == null) {
-            return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
+    criarNovoPedido: async (req, res) => {
+        try {
+            const {
+                id_cliente,
+                data_pedido,
+                tipo_entrega,
+                distancia_km,
+                peso_kg,
+                valor_base_km,
+                valor_base_kg
+            } = req.body;
+
+            //validação dos campos obrigatórios
+            if (!id_cliente || !data_pedido || !tipo_entrega || distancia_km == null || peso_kg == null || valor_base_km == null || valor_base_kg == null) {
+                return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
+            }
+
+
+            const novoPedido = await pedidoModel.criarPedidoComEntrega(
+                id_cliente,
+                data_pedido,
+                tipo_entrega,
+                distancia_km,
+                peso_kg,
+                valor_base_km,
+                valor_base_kg
+            );
+
+            res.status(201).json(novoPedido);
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ erro: "Erro ao criar pedido." });
         }
-        
-
-        const novoPedido = await pedidoModel.criarPedidoComEntrega(
-            id_cliente,
-            data_pedido,
-            tipo_entrega,
-            distancia_km,
-            peso_kg,
-            valor_base_km,
-            valor_base_kg
-        );
-
-        res.status(201).json(novoPedido);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ erro: "Erro ao criar pedido." });
-    }
-},
+    },
 
 
     // Selecionar todos
@@ -135,50 +135,50 @@ const pedidoController = {
      * }
      */
     atualizaPedido: async (req, res) => {
-    try {
-        const { id_pedido } = req.query;
+        try {
+            const { id_pedido } = req.query;
 
-        const {
-            tipo_entrega,
-            distancia_km,
-            peso_kg
-        } = req.body;
+            const {
+                tipo_entrega,
+                distancia_km,
+                peso_kg
+            } = req.body;
 
-        if (!id_pedido) {
-            return res.status(400).json({ erro: "ID do pedido é obrigatório." });
+            if (!id_pedido) {
+                return res.status(400).json({ erro: "ID do pedido é obrigatório." });
+            }
+
+            if (!tipo_entrega || distancia_km == null || peso_kg == null) {
+                return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
+            }
+
+            const resultado = await pedidoModel.atualizaPedido(
+                id_pedido,
+                tipo_entrega,
+                distancia_km,
+                peso_kg
+            );
+
+            return res.status(200).json({
+                mensagem: "Pedido atualizado com sucesso!",
+                resultado
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                message: "Erro no servidor.",
+                erro: error.message
+            });
         }
-
-        if (!tipo_entrega || distancia_km == null || peso_kg == null) {
-            return res.status(400).json({ erro: "Todos os campos devem ser preenchidos." });
-        }
-
-        const resultado = await pedidoModel.atualizaPedido(
-            id_pedido,
-            tipo_entrega,
-            distancia_km,
-            peso_kg
-        );
-
-        return res.status(200).json({
-            mensagem: "Pedido atualizado com sucesso!",
-            resultado
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            message: "Erro no servidor.",
-            erro: error.message
-        });
-    }
-},
-/**
- * Deleta um pedido com base no ID recebido pela URL.
- * Antes de deletar, verifica se o pedido realmente existe.
- *
- * @param {*} req  Objeto da requisição contendo os parâmetros da rota
- * @param {*} res  Objeto de resposta HTTP
- * @returns Resposta JSON informando sucesso ou erro
- */
+    },
+    /**
+     * Deleta um pedido com base no ID recebido pela URL.
+     * Antes de deletar, verifica se o pedido realmente existe.
+     *
+     * @param {*} req  Objeto da requisição contendo os parâmetros da rota
+     * @param {*} res  Objeto de resposta HTTP
+     * @returns Resposta JSON informando sucesso ou erro
+     */
     deletarPedido: async (req, res) => {
         try {
             const { id } = req.params;
@@ -190,7 +190,7 @@ const pedidoController = {
             if (!pedidoExistente) {
                 return res.status(404).json({ erro: "Pedido não encontrado." });
             }
-        
+
             const resultado = await pedidoModel.DeletaPedido(id);
             return res.status(200).json({
                 mensagem: "Pedido deletado com sucesso!",
@@ -203,7 +203,7 @@ const pedidoController = {
                 message: "Erro no servidor.",
                 erro: error.message
             });
-            
+
         }
     }
 

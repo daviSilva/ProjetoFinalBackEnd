@@ -1,6 +1,6 @@
 const express = require('express');
 const pedidoRoutes = express.Router();
-const  pedidoController  = require('../controllers/pedidoController');
+const pedidoController = require('../controllers/pedidoController');
 
 // Rota para obter todos os pedidos
 pedidoRoutes.get('/pedidos', pedidoController.selecionaTodosPedidos);

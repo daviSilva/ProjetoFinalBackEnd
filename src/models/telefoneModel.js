@@ -99,7 +99,7 @@ const telefoneModel = {
 
         }
     },
- // Deletar Telefone
+    // Deletar Telefone
     /**
  /**
      * @function deleteTelefone
@@ -143,7 +143,7 @@ const telefoneModel = {
      *
      * @throws {Error} Caso ocorra falha na consulta ao banco.
      */
-    
+
     selecionaTelefonePorId: async (id_telefone) => {
         const connection = await pool.getConnection();
         try {
@@ -155,7 +155,8 @@ const telefoneModel = {
         } catch (error) {
             connection.rollback();
             throw error;
-        }}
+        }
+    }
 };
 
 module.exports = { telefoneModel };

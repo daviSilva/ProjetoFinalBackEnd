@@ -1,6 +1,6 @@
 const express = require('express');
 const clienteRoutes = express.Router();
-const  clienteController  = require('../controllers/clienteController');
+const clienteController = require('../controllers/clienteController');
 
 
 // Rota para obter todos os clientes
